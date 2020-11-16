@@ -37,7 +37,7 @@ class fit_plugin_shopify
      *
      * @since    1.0.0
      * @access   private
-     * @var      string $version The current version of this plugin.
+     * @var      string $version The current version of this plugin.git add .
      */
     private $version;
 
