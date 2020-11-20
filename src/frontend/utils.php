@@ -4,9 +4,13 @@
 namespace fitplugin\frontend\utils;
 
 
+use fitPlugin\backend\shopifyApi;
+
 final class utils
 {
     private static $instance = null;
+
+    private $client;
 
     /**
      * is not allowed to call from outside to prevent from creating multiple instances,
@@ -14,6 +18,7 @@ final class utils
      */
     private function __construct()
     {
+        $this->client = new shopifyApi();
     }
 
     /**
@@ -117,12 +122,12 @@ final class utils
 
     public function get_currency(): string
     {
-        return '$';
+        return $this->client->get_store_info()->money_format;
     }
 
     public function get_price($id): string
     {
-        return 40;
+        return $this->client->get_price($id);
     }
 
     /**

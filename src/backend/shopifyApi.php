@@ -37,4 +37,18 @@ class shopifyApi
         return $service->all($attr); #Fetch all products, with optional params
     }
 
+
+    public function get_price($id)
+    {
+        $service = new Shopify\Service\ProductVariantService($this->client);
+        $product = $service->get($id); # Get a single product
+        return $product->price;
+    }
+
+    public function get_store_info()
+    {
+        $service = new Shopify\Service\ShopService($this->client);
+        return $service->get();
+    }
+
 }

@@ -229,16 +229,16 @@ jQuery(document).ready(function ($) {
 
                     $(dialogModal).find('#places').html(str.join(''));
                     $(dialogModal).find('#places').css('width', rows * settings.placeWidth);
-
-                    $(dialogModal).find('.price').html('Price: ' + $('.room_wrp').data('price') + fit.crns);
+                    let price = $('.room_wrp').data('price');
+                    $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}git ', price));
 
                     $(dialogModal).find('#places').on('click', '.place', function () {
                         if ($(this).hasClass('selectedPlace')) {
                             alert('This place is already reserved');
                         } else {
                             $(this).toggleClass('selectingPlace');
-
-                            $(dialogModal).find('.price').html('Price: ' + $('.room_wrp').data('price') * $('#places li.selectingPlace').length + fit.crns);
+                            let price = $('.room_wrp').data('price') * $('#places li.selectingPlace').length;
+                            $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
                         }
                     });
 

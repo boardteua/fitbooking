@@ -181,7 +181,7 @@ class table
     {
         global $wpdb;
         $c_items = $wpdb->get_results("SELECT * FROM {$this->table_name} WHERE room_id = {$id}", 'ARRAY_A');
-        return $c_items[0];
+        return $c_items;
     }
 
     protected function get_db_calendar()
