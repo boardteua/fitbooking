@@ -1,0 +1,240 @@
+/**
+* All of the CSS for your public-facing functionality should be
+* included in this file.
+*/
+
+.book-dialog .book-content {
+    box-shadow: 0 5px 10px rgba(0, 0, 0, .3);
+}
+
+
+.room_wrp .card-body h3 {
+    margin: 0;
+}
+
+.room_wrp {
+    max-width: 1200px;
+}
+
+.room_wrp .card-body {
+    flex: 0 1 auto;
+    -ms-flex: 0 1 auto;
+    background-color: #eee;
+}
+
+.card-group {
+    margin: 0 15px;
+}
+
+.card-group .owl-stage-outer {
+    z-index: 100;
+    position: relative;
+}
+
+.event-wrp:hover {
+    background-color: #f7f7f7;
+}
+
+.event-wrp {
+    cursor: pointer;
+    display: flex;
+}
+
+.owl-theme .owl-nav .owl-next span {
+    color: #fff;
+}
+
+.owl-theme .owl-nav .owl-next {
+    margin-right: -40px !important;
+    height: 200px;
+    width: 30px;
+    background-color: #000 !important;
+    color: #fff;
+}
+
+.owl-theme .owl-nav .owl-prev span {
+    color: #fff;
+}
+
+.owl-theme .owl-nav .owl-prev {
+    margin-left: -40px !important;
+    height: 200px;
+    width: 30px;
+    background-color: #000 !important;
+
+}
+
+.owl-theme .owl-nav {
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+    position: absolute;
+    top: -15px;
+    width: 100%;
+    z-index: 10;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.book-content .modal-body .row {
+
+    border-bottom: 1px solid #dee2e6;
+}
+
+.book-content .modal-body {
+    padding: 0;
+}
+
+.book-content .modal-footer {
+    border: none;
+}
+
+.book-content .modal-sidebar {
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+.book-dialog .modal-title {
+    margin: 0;
+}
+
+.book-dialog .room-title {
+    margin: 0 15px;
+    color: #555;
+}
+
+.book-dialog .room-trainer {
+    margin: 0 15px;
+    color: #555;
+}
+
+.room-description, .trainer-description {
+    font-size: 13px;
+    margin: 0 15px 15px;
+}
+
+.book-dialog .img-holder {
+    margin-bottom: 10px;
+}
+
+/**/
+
+
+.variant-place-selector #places {
+    position: relative;
+    width: 100%;
+    margin: 15px;
+}
+
+.variant-place-selector #places li {
+    list-style: none outside none;
+    position: absolute;
+}
+
+.variant-place-selector #places li:hover a {
+    color: #fd7e0f;
+}
+
+.variant-place-selector #places li:hover {
+    background-color: yellow;
+    cursor: pointer;
+    color: #000;
+}
+
+.variant-place-selector #places li a {
+    font-size: 1em;
+    color: #fff;
+}
+
+.variant-place-selector #places .place {
+    height: 36px;
+    width: 36px;
+    display: block;
+    border-radius: 18px;
+    background-color: #C4C4C4;
+    text-align: center;
+    line-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.variant-place-selector #places .selectedPlace {
+    background-color: #dc3545;
+}
+
+.variant-place-selector #places .selectingPlace {
+    background-color: #39e065;
+}
+
+.fc-event-main {
+    padding: 3px 3px 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.fc-event-main strong {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.place-take {
+    flex-direction: column;
+    align-items: center;
+}
+
+.place-take .trainer-place:hover .trainer-photo:last-child {
+    display: none;
+}
+
+.place-take .trainer-place {
+    width: 100px;
+    height: 100px;
+    border-radius: 50px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e2e2e2;
+    overflow: hidden;
+    object-fit: cover;
+    position: relative;
+}
+
+.trainer-photo {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+}
+
+.today .card-body {
+    background-color: #e0e0e0 !important;
+}
+
+.customer-note-wrp h4 {
+    margin-top: 0;
+}
+
+.customer-note-wrp {
+    width: 100%;
+
+}
+
+#customer_note {
+    width: 100%;
+    min-height: 100px;
+}
+
+.button-wrp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: revert;
+}
