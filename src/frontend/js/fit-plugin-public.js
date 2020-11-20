@@ -44,7 +44,8 @@ jQuery(document).ready(function ($) {
     carousel.owlCarousel({
         nav: true,
         dots: false,
-        margin: 15
+        margin: 15,
+        loop: true
     });
 
     let y = new Intl.DateTimeFormat('en', {year: '2-digit'}).format(Date.now());
@@ -230,7 +231,7 @@ jQuery(document).ready(function ($) {
                     $(dialogModal).find('#places').html(str.join(''));
                     $(dialogModal).find('#places').css('width', rows * settings.placeWidth);
                     let price = $('.room_wrp').data('price');
-                    $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}git ', price));
+                    $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
 
                     $(dialogModal).find('#places').on('click', '.place', function () {
                         if ($(this).hasClass('selectedPlace')) {

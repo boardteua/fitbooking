@@ -24,10 +24,12 @@ use fitplugin\frontend\utils\utils;
 
 $template = new templates();
 $utils = utils::getInstance();
- ?>
-<li data-event-id="<?= $data->event['id'] ?>" data-trainer-id="<?= $utils->get_trainers($data->event['trainer_id'])[0]->ID ?>"
+?>
+<li data-event-id="<?= $data->event['id'] ?>"
+    data-trainer-id="<?= $utils->get_trainers($data->event['trainer_id'])[0]->ID ?>"
     class="event-wrp list-group-item">
     <strong class="eventr-date mr-1"><?= date_format(date_create($data->event['start']), "H:i") ?></strong>
     <i clas="event-title"><?= $data->event['title'] ?></i>
-    <span class="event-trainer text-black-50 ml-auto"><?= $utils->get_trainers($data->event['trainer_id'])[0]->post_title ?></span>
+    <span class="event-trainer text-black-50 ml-auto"><?= $utils->get_trainers($data->event['trainer_id'])[0]->post_title ?> <span class="mini-ava ml-2"  ><img
+               src="<?= $utils->get_trainers($data->event['trainer_id'])[0]->trainer_photos[0] ?>"/></span> </span>
 </li>

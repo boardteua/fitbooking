@@ -238,3 +238,14 @@
     justify-content: center;
     flex-direction: revert;
 }
+
+.mini-ava {
+    width: 26px;
+    height: 26px;
+    border-radius: 13px;
+    float: right;
+    display: block;
+    object-fit: cover;
+    overflow: hidden;
+
+}
