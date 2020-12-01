@@ -19,10 +19,10 @@ class shopifyApi
 
         $this->client = new Shopify\PrivateApi(array(
             'api_version' => '2020-10/',
-            'api_key' => $this->fit_booking_options['api_key_0'] ? $this->fit_booking_options['api_key_0'] : '0118036ed7bea77e1b194d46edfd6554',
-            'password' => $this->fit_booking_options['api_pass_0'] ? $this->fit_booking_options['api_pass_0'] : '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',
-            'shared_secret' => $this->fit_booking_options['api_shared_secret_0'] ? $this->fit_booking_options['api_shared_secret_0'] : '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',
-            'myshopify_domain' => $this->fit_booking_options['api_shop_domain_0'] ? $this->fit_booking_options['api_shop_domain_0'] : 'org100h.myshopify.com',
+            'api_key' => $this->fit_booking_options ? $this->fit_booking_options['api_key_0'] : '0118036ed7bea77e1b194d46edfd6554',
+            'password' => $this->fit_booking_options ? $this->fit_booking_options['api_pass_0'] : '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',
+            'shared_secret' => $this->fit_booking_options ? $this->fit_booking_options['api_shared_secret_0'] : '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',
+            'myshopify_domain' => $this->fit_booking_options ? $this->fit_booking_options['api_shop_domain_0'] : 'org100h.myshopify.com',
         ));
     }
 
