@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     let places_ids = args.event.extendedProps.places_pool;
 
 
-                    title_obj.innerHTML = args.event.title + ' ' + args.timeText ;
+                    title_obj.innerHTML = args.event.title + ' ' + args.timeText;
 
                     if (trainer) {
                         jQuery.each(fit.trainers, function (index, val) {
@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         event_start = args.event.start.toLocaleString();
                         event_end = args.event.end.toLocaleString();
                         remove = '<button type="button" class="btn btn-danger" data-dismiss="modal" id="event_remove" data-id="' + id + '" >Remove</button>'
-                        select_room = '<select name="room_edit" id="room_edit" value="' + room_id + '" class="form-control my-2"></select>';
+                        select_room = '<div class="form-group col"><label for="event_title">Event Gym</label><select name="room_edit" id="room_edit" value="' + room_id + '" class="form-control my-2"></select></div>';
                         jQuery.ajax({
                             url: ajaxurl,
                             type: 'POST',
@@ -379,10 +379,17 @@ document.addEventListener('DOMContentLoaded', function () {
                     '</button>' +
                     '</div>' +
                     '<div class="modal-body">' +
+                    '<div class="form-group">' +
+                    '<label for="event_title">Event title</label> ' +
                     '<input type="text" name="event_title" id="event_title" value="' + event_title + '" class="form-control my-2" placeholder="Event Title" required>' +
-
+                    '</div>' +
+                    '<div class="row">' +
                     select_room +
+                    '<div class="form-group col">' +
+                    '<label for="event_title">Event Trainer</label> ' +
                     '<select name="trainer_edit" id="trainer_edit"  class="form-control my-2" required></select>' +
+                    '</div>' +
+                    '</div>' +
                     '<div id="holder" class="variant-place-selector my-2">' +
                     '<ul id="places" class="p-2">' +
                     placeInit(pool, pool_capacity[1], pool_capacity[0]) +

@@ -18,9 +18,9 @@ jQuery(document).ready(function ($) {
         $.each($('.room_wrp'), function () {
             let id = $('#filter_by_room').find(':selected').data('id');
             if ($(this).data('id') == id) {
-                $(this).removeClass('hidden')
+                $(this).removeClass('hidden').fadeIn(300);
             } else {
-                $(this).addClass('hidden')
+                $(this).addClass('hidden').fadeOut(300);
             }
         })
     }
@@ -45,7 +45,25 @@ jQuery(document).ready(function ($) {
         nav: true,
         dots: false,
         margin: 15,
-        loop: true
+        loop: false,
+        responsive: {
+            0: {
+                items: 1,
+                nav: false
+            },
+            600: {
+                items: 2,
+                nav: false
+            },
+            1000: {
+                items: 3,
+                nav: true
+            },
+            1980: {
+                items: 4,
+                nav: true
+            }
+        }
     });
 
     let y = new Intl.DateTimeFormat('en', {year: '2-digit'}).format(Date.now());
@@ -55,6 +73,8 @@ jQuery(document).ready(function ($) {
     $.each($('.room_wrp:not(.hidden) .owl-item'), function (index, val) {
         if ($(this).find('.item').data('date') == y + m + d) {
             carousel.trigger('to.owl.carousel', index);
+        } else {
+            carousel.trigger('to.owl.carousel', 0);
         }
     });
 
@@ -78,7 +98,7 @@ jQuery(document).ready(function ($) {
             '<div class="modal-body">' +
             '<div class="container-fluid">' +
             '<div class="row">' +
-            '<div class="col-sm-3 modal-sidebar">' +
+            '<div class="col-sm-3 col-12 modal-sidebar">' +
             '<div class="img-holder owl-carousel owl-theme"> ' +
             '</div>' +
             '<h3 class="room-title"></h3>' +
@@ -90,10 +110,10 @@ jQuery(document).ready(function ($) {
             '<p class="trainer-description"></p>' +
             '<h5 class="event-duration"></h5>' +
             '</div>' +
-            '<div class="col-sm-9 place-take d-flex align-content-center justify-content-center">' +
+            '<div class="col-sm-9 col-12 place-take d-flex align-content-center justify-content-center">' +
             '<div class="trainer-place">' +
             '</div>' +
-            '<div id="holder" class="variant-place-selector my-2">' +
+            '<div id="holder" class="variant-place-selector my-2 w-100 d-flex align-items-center justify-content-center">' +
             '<ul id="places" class="p-2">' +
             '</ul>' +
             '</div>' +
@@ -151,6 +171,7 @@ jQuery(document).ready(function ($) {
                                 lazyLoad: true,
                                 navigation: false,
                                 dots: false,
+                                loop: true,
                                 margin: 0
                             });
                         }
@@ -197,9 +218,10 @@ jQuery(document).ready(function ($) {
                     let settings = {
                         rowCssPrefix: 'row-',
                         colCssPrefix: 'col-',
-                        placeWidth: 60,
-                        placeHeight: 60,
+                        placeWidth: 3,
+                        placeHeight: 3,
                     };
+
 
                     $.each(fit.rooms, function (index, val) {
                         if (val.ID == out.data.room_id) {
@@ -208,9 +230,18 @@ jQuery(document).ready(function ($) {
                         }
                     });
 
-                    $('#places').css('height', cols * settings.placeHeight);
+                    let ResizeFunction = function () {
 
+                        if (window.innerWidth >= 1200) {
+                            settings.placeWidth = 3;
+                            settings.placeHeight = 3;
+                        }
 
+                    }
+                    ResizeFunction()
+                    $(dialogModal).find('#places').css('width', rows * settings.placeWidth + 'vw');
+                    $(dialogModal).find('#places').css('height', cols * settings.placeHeight + 'vw');
+                    $(window).resize(ResizeFunction).trigger('resize');
                     let str = [];
                     let reservedPlaces = out.data.places_pool.split(',');
                     console.log(reservedPlaces);
@@ -222,14 +253,14 @@ jQuery(document).ready(function ($) {
                                 className += ' selectedPlace';
                             }
                             str.push('<li class="' + className + '"' +
-                                'style="top:' + (j * settings.placeHeight).toString() + 'px;left:' + (i * settings.placeWidth).toString() + 'px">' +
+                                'style="top:' + (j * settings.placeHeight).toString() + 'vw;left:' + (i * settings.placeWidth).toString() + 'vw">' +
                                 '<a title="' + placeNo + '">' + placeNo + '</a>' +
                                 '</li>');
                         }
                     }
 
                     $(dialogModal).find('#places').html(str.join(''));
-                    $(dialogModal).find('#places').css('width', rows * settings.placeWidth);
+
                     let price = $('.room_wrp').data('price');
                     $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
 
@@ -244,6 +275,7 @@ jQuery(document).ready(function ($) {
                     });
 
                     $('#submit_event').on('click', function () {
+                        let pool = [], pool_all = [];
 
                         let product = $('.room_wrp').data('product');
                         let note = $('#customer_note').val().trim();
@@ -274,30 +306,6 @@ jQuery(document).ready(function ($) {
                         } else {
                             alert('Select Place');
                         }
-                        // $.ajax({
-                        //     url: fit.ajaxurl,
-                        //     type: 'POST',
-                        //     cache: false,
-                        //     data: {
-                        //         action: 'update_event',
-                        //         nonce: fit.nonce,
-                        //         id: out.data.id,
-                        //         places_pool: pool_all,
-                        //     },
-                        //     success: function (out) {
-                        //         url += '/cart/' + product + ':' + qty +
-                        //         '?attributes["Event_Title"]=' + title +
-                        //         '&attributes["Room"]=' + room +
-                        //         '&attributes["Trainer"]=' + trainer +
-                        //         '&attributes["Date_Time"]=' + time +
-                        //         '&attributes["Select_Place"]=' + pool.length > 1 ? pool.join(',') : pool[0] +
-                        //             '&note=' + note;
-                        //         window.location.href = url;
-                        //     },
-                        //     error: function (err) {
-                        //         alert(err.data)
-                        //     }
-                        // });
 
                     });
 

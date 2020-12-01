@@ -27,22 +27,22 @@ $options = get_option('fit_booking_option_name');
 $utils = utils::getInstance();
 
 ?>
-
-<div class="room_wrp w-100 hidden"
-     data-id="<?= $data->room[0]->ID ?>"
-     data-shop="<?= array_key_exists('api_shop_domain_0', $options) ? $options['api_shop_domain_0'] : '#' ?>"
-     data-product="<?= $data->room[0]->product_id ?>"
-     data-price="<?= $utils->get_price($data->room[0]->product_id) ?>"
->
-    <h3><?= esc_attr($data->room[0]->post_title) ?></h3>
-    <div class="card-group owl-carousel owl-theme">
-        <?php
-        foreach ($utils->group_by('day', $data->days) as $day => $events) {
-            $template->set_template_data(array(
-                'day' => $day,
-                'events' => $events
-            ))->get_template_part('events');
-        }
-        ?>
+<?php if ($data->room[0]->ID !== 0): ?>
+    <div class="room_wrp w-100 hidden"
+         data-id="<?= $data->room[0]->ID ?>"
+         data-shop="<?= array_key_exists('api_shop_domain_0', $options) ? $options['api_shop_domain_0'] : '#' ?>"
+         data-product="<?= $data->room[0]->product_id ?>"
+         data-price="<?= $utils->get_price($data->room[0]->product_id) ?>">
+        <h3><?= esc_attr($data->room[0]->post_title) ?></h3>
+        <div class="card-group owl-carousel owl-theme">
+            <?php
+            foreach ($utils->group_by('day', $data->days) as $day => $events) {
+                $template->set_template_data(array(
+                    'day' => $day,
+                    'events' => $events
+                ))->get_template_part('events');
+            }
+            ?>
+        </div>
     </div>
-</div>
+<?php endif; ?>

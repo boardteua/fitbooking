@@ -25,20 +25,20 @@ $utils = utils::getInstance();
 
 ?>
 
-<div class="container">
+<div class="container room-filters">
     <div class="row">
-        <form class="d-flex">
-            <div class="form-group mr-2">
-                <label for="filter_by_room">Filter by Gym</label>
-                <select class="form-control" id="filter_by_room" style="width: 16vw">
+        <form class="d-flex w-100 justify-content-md-start justify-content-center">
+            <div class="form-group mr-2 w-100">
+                <label for="filter_by_room">Select Gym</label>
+                <select class="form-control" id="filter_by_room" >
                     <?php foreach ($utils->get_rooms(0) as $room) { ?>
                         <option data-id="<?= $room->ID ?>" id="room-<?= $room->ID ?>"><?= $room->post_title ?></option>
                     <?php } ?>
                 </select>
             </div>
-            <div class="form-group mr-2">
-                <label for="filter_by_trainer">Filter by trainer</label>
-                <select class="form-control" id="filter_by_trainer" style="width: 16vw">
+            <div class="form-group mr-2 w-100">
+                <label for="filter_by_trainer">Select trainer</label>
+                <select class="form-control" id="filter_by_trainer" >
                     <option data-id="0">All</option>
                     <?php foreach ($utils->get_trainers(0) as $trainer) { ?>
                         <option data-id="<?= $trainer->ID ?>"

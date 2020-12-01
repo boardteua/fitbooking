@@ -26,8 +26,7 @@ $template = new templates();
 $today = date("ymd") == date_format(date_create($data->day), "ymd") ? 'today' : '';
 
 ?>
-<div data-date="<?= esc_attr(date_format(date_create($data->day), "ymd")) ?>" class="card item <?= $today ?>"
-     tyle="width: 18rem;">
+<div data-date="<?= esc_attr(date_format(date_create($data->day), "ymd")) ?>" class="card item <?= $today ?>" >
     <div class="card-body">
         <h3 class="card-title"><?= esc_attr(date_format(date_create($data->day), "(M, d) l")) ?></h3>
     </div>

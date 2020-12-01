@@ -3,6 +3,15 @@
 * included in this file.
 */
 
+
+
+@media (max-width: 1210px) {
+    #places .place {
+        width: 4vw !important;
+        height: 4vw !important;
+    }
+}
+
 .book-dialog .book-content {
     box-shadow: 0 5px 10px rgba(0, 0, 0, .3);
 }
@@ -22,9 +31,6 @@
     background-color: #eee;
 }
 
-.card-group {
-    margin: 0 15px;
-}
 
 .card-group .owl-stage-outer {
     z-index: 100;
@@ -129,7 +135,10 @@
 .variant-place-selector #places {
     position: relative;
     width: 100%;
-    margin: 15px;
+    margin: 15px 0;
+
+    overflow: hidden;
+    overflow-x: scroll;
 }
 
 .variant-place-selector #places li {
@@ -155,14 +164,14 @@
 .variant-place-selector #places .place {
     height: 36px;
     width: 36px;
-    display: block;
-    border-radius: 18px;
     background-color: #C4C4C4;
     text-align: center;
-    line-height: 32px;
+    line-height: 1em;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 5px;
+
 }
 
 .variant-place-selector #places .selectedPlace {
