@@ -327,9 +327,11 @@ class backend
     {
         $products = new shopifyApi();
         $pool = array();
-        foreach ($products->get_products() as $product) {
-            foreach ($product->variants as $variant) {
-                $pool[$variant->id] = $product->title . ' ' . $variant->title;
+        if ($products->get_products()) {
+            foreach ($products->get_products() as $product) {
+                foreach ($product->variants as $variant) {
+                    $pool[$variant->id] = $product->title . ' ' . $variant->title;
+                }
             }
         }
 

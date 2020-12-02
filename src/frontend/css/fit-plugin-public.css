@@ -138,7 +138,7 @@
     margin: 15px 0;
 
     overflow: hidden;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
 
 .variant-place-selector #places li {

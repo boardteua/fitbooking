@@ -159,9 +159,7 @@ jQuery(document).ready(function ($) {
                             let img = '';
                             $.each(val.room_gallery, function (index, val) {
                                 img += '<div class="item">';
-                                img += '<a href="' + val.full_image_url + '">';
-                                img += '<img src="' + val.thumbnail_src + '" srcset="' + val.large_srcset + '" class="room-image" >';
-                                img += '</a>';
+                                img += '<img  src="' + val + '"  class="room-image" >';
                                 img += '</div>';
                             })
 

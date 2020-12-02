@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     dialogModal = initModal();
                 }
 
+
                 switch (state) {
                     case 'add':
                         event_title = '';

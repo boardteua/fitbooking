@@ -37,7 +37,7 @@ $utils = utils::getInstance();
                 </select>
             </div>
             <div class="form-group mr-2 w-100">
-                <label for="filter_by_trainer">Select trainer</label>
+                <label for="filter_by_trainer">Select Trainer</label>
                 <select class="form-control" id="filter_by_trainer" >
                     <option data-id="0">All</option>
                     <?php foreach ($utils->get_trainers(0) as $trainer) { ?>

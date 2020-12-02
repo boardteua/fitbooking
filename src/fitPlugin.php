@@ -234,8 +234,8 @@ class fitPlugin
         $frontend = new frontend($this->get_fit_plugin(), $this->get_version(), $this->get_table());
         $web_hooks = new webHooks($this->get_table());
 
-        $web_hooks->create_hook('orders/fulfilled');
-        $web_hooks->create_hook('orders/cancelled');
+        //$web_hooks->create_hook('orders/fulfilled');
+        //$web_hooks->create_hook('orders/cancelled');
         #$web_hooks->remove_all_hooks();
 
         $this->loader->add_action('init', $web_hooks, 'receiver');

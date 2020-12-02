@@ -51,6 +51,15 @@ final class utils
         foreach ($posts as $room) {
 
 
+            $images = get_field('gym_gallery',$room->ID);
+
+            if ($images !== null) {
+                foreach (explode(',', $images) as $image) {
+                    $img_url[] = wp_get_attachment_image_src($image, 'thumbnail')[0];
+                }
+            }
+
+
             $rooms[] = (object)array(
                 'ID' => $room->ID,
                 'post_title' => $room->post_title,
@@ -61,7 +70,7 @@ final class utils
                     get_field('place_count_rows', $room->ID),
                     get_field('place_count_cols', $room->ID)
                 ),
-                'room_gallery' => get_field('gym_gallery', $room->ID),
+                'room_gallery' => $img_url,
             );
         }
 
