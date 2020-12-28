@@ -12,12 +12,21 @@ class table extends \fitPlugin\backend\table
             return false;
 
         $attr = $this->get_attributes($data);
+
         $processed_pool = $this->to_string(array_unique(array_merge($attr['order_pool'], $attr['current_pool']), SORT_NUMERIC));
 
         $res = $this->update_db_calendar_place(array(
             'id' => $data['note_attributes'][0]['value'],
             'places_pool' => $processed_pool
         ));
+
+
+        $order['event_id'] = $data['note_attributes'][0]['value'];
+        $order['order_id'] = $data['id'];
+
+        if ($this->get_event_order($order['order_id']) === []) {
+            $this->add_event_order($order);
+        }
 
         if (is_a($res, 'WP_Error')) {
             throw new \Exception();
@@ -31,6 +40,8 @@ class table extends \fitPlugin\backend\table
         $current_pool = array();
         $new_pool = array();
         $attr = $data['note_attributes'];
+
+        error_log('Current pool: ' . serialize($data));
 
         $event = $this->get_db_calendar_by_id($attr[0]['value']);
         if (is_a($event, 'WP_Error')) {
@@ -69,6 +80,14 @@ class table extends \fitPlugin\backend\table
             return false;
 
         $attr = $this->get_attributes($data);
+
+
+        $order['event_id'] = $data['note_attributes'][0]['value'];
+        $order['order_id'] = $data['id'];
+
+        if ($this->get_event_order($order['order_id']) === $data['id']) {
+            $this->remove_event_order($order['order_id']);
+        }
 
 
         error_log('array dif: ' . serialize(array_diff($attr['order_pool'], $attr['current_pool'])));

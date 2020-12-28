@@ -42,6 +42,7 @@ class table
 
         $this->table_name = $table_name;
 
+
     }
 
     /**
@@ -68,6 +69,131 @@ class table
         return $this->version;
     }
 
+
+    public function get_orders()
+    {
+        $return_json = array();
+        $orders = $this->get_all_orders();
+
+        foreach ($orders as $order) {
+
+            $event = $this->get_db_calendar_by_id($order['event_id']);
+
+            $event_title = $event['title'];
+            $event_date = $event['start'];
+            $event_room = $this->get_room_by_id($event['room_id'])[0]->post_title;
+            $event_trainer = $this->get_trainer_by_id($event['trainer_id'])[0]->post_title;
+
+            $row = array(
+                'event' => $order['event_id'] . ' ' . $event_title,
+                'event_date' => $event_date,
+                'event_room' => $event_room,
+                'event_trainer' => $event_trainer,
+                'order_id' => $order['order_id']
+            );
+            $return_json[] = $row;
+        }
+
+        echo json_encode(array('data' => $return_json));
+        wp_die();
+    }
+
+    protected function get_all_orders()
+    {
+        global $wpdb;
+        $c_items = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}bk_eventscustomer", 'ARRAY_A');
+
+        return $c_items;
+
+    }
+
+    protected function get_db_calendar_by_id($id)
+    {
+        global $wpdb;
+        $c_items = $wpdb->get_results("SELECT * FROM {$this->table_name} WHERE id = {$id}", 'ARRAY_A');
+        return $c_items[0];
+    }
+
+    public function get_room_by_id($id)
+    {
+        $attr = array(
+            'post_type' => 'gym',
+            'post_status' => 'publish',
+            'numberposts' => -1,
+            'orderby' => 'date',
+            'order' => 'ASC',
+        );
+        if (isset($id) && $id > 0) {
+            $attr['include'] = [$id];
+        }
+        $posts = get_posts($attr);
+        $rooms = [];
+
+        foreach ($posts as $room) {
+
+
+            $images = get_field('gym_gallery', $room->ID);
+
+            if ($images !== null) {
+                foreach (explode(',', $images) as $image) {
+                    $img_url[] = wp_get_attachment_image_src($image, 'thumbnail')[0];
+                }
+            }
+
+
+            $rooms[] = (object)array(
+                'ID' => $room->ID,
+                'post_title' => $room->post_title,
+                'post_content' => $room->post_content,
+                'product_id' => get_field('product_id', $room->ID),
+                'product_price' => '100',
+                'pool_capacity' => array(
+                    get_field('place_count_rows', $room->ID),
+                    get_field('place_count_cols', $room->ID)
+                ),
+                'room_gallery' => isset($img_url) ? $img_url : '',
+            );
+        }
+
+        return $rooms ? $rooms : [];
+
+    }
+
+    public function get_trainer_by_id($id)
+    {
+        $attr = array(
+            'post_type' => 'trainer',
+            'post_status' => 'publish',
+            'numberposts' => -1
+        );
+        if (isset($id) && $id > 0) {
+            $attr['include'] = [$id];
+        }
+        $posts = get_posts($attr);
+        $trainers = [];
+
+        foreach ($posts as $trainer) {
+
+            $img_url = array();
+
+            $images = get_field('trainer_photos', $trainer->ID);
+
+            if ($images !== null) {
+                foreach (explode(',', $images) as $image) {
+                    $img_url[] = wp_get_attachment_image_src($image, 'thumbnail')[0];
+                }
+            }
+
+            $trainers[] = (object)array(
+                'ID' => $trainer->ID,
+                'post_title' => $trainer->post_title,
+                'post_content' => $trainer->post_content,
+                'trainer_photos' => $img_url
+            );
+        }
+
+        return $trainers ? $trainers : [];
+    }
 
     public function table_actions()
     {
@@ -150,6 +276,14 @@ class table
         return $c_items;
     }
 
+    private function process_date($event)
+    {
+        $event['day'] = date_format(date_create($event['start']), "Y-m-d");
+        $event['start'] = date_format(date_create($event['start']), "Y-m-d H:i:s");
+        $event['end'] = date_format(date_create($event['end']), "Y-m-d H:i:s");
+        return $event;
+    }
+
     protected function update_db_calendar_place($input)
     {
         global $wpdb;
@@ -177,14 +311,6 @@ class table
         return $c_items;
     }
 
-    private function process_date($event)
-    {
-        $event['day'] = date_format(date_create($event['start']), "Y-m-d");
-        $event['start'] = date_format(date_create($event['start']), "Y-m-d H:i:s");
-        $event['end'] = date_format(date_create($event['end']), "Y-m-d H:i:s");
-        return $event;
-    }
-
     protected function get_db_calendar_by_room($id)
     {
         global $wpdb;
@@ -199,11 +325,41 @@ class table
         return $c_items;
     }
 
-    protected function get_db_calendar_by_id($id)
+    protected function add_event_order($input)
     {
         global $wpdb;
-        $c_items = $wpdb->get_results("SELECT * FROM {$this->table_name} WHERE id = {$id}", 'ARRAY_A');
-        return $c_items[0];
+
+        error_log(serialize($input));
+
+        $c_items = $wpdb->insert("{$wpdb->prefix}bk_eventscustomer", $input);
+
+        error_log(serialize($c_items));
+        if ($c_items !== 1) {
+            return new \WP_Error('insert_error', 'Order insert db error');
+        }
+        return $c_items;
+
+    }
+
+    protected function get_event_order($order_id)
+    {
+        global $wpdb;
+        $c_items = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}bk_eventscustomer  WHERE order_id = {$order_id}", 'ARRAY_A');
+
+        return $c_items;
+
+    }
+
+    protected function remove_event_order($order_id)
+    {
+        global $wpdb;
+        $c_items = $wpdb->delete("{$wpdb->prefix}bk_eventscustomer", array('order_id' => $order_id));
+
+        if ($c_items !== 1) {
+            return new \WP_Error('remove_error', 'Order remove db error');
+        }
+        return $c_items;
+
     }
 
 

@@ -70,7 +70,7 @@ final class utils
                     get_field('place_count_rows', $room->ID),
                     get_field('place_count_cols', $room->ID)
                 ),
-                'room_gallery' => $img_url,
+                'room_gallery' => isset($img_url) ? $img_url : '',
             );
         }
 

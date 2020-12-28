@@ -90,8 +90,13 @@ class backend
          */
         if ('toplevel_page_fit_booking' === $hook) {
             wp_enqueue_style($this->fit_plugin, plugin_dir_url(__FILE__) . 'css/fit-plugin-admin.css', array(), $this->version, 'all');
-            wp_enqueue_style($this->fit_plugin . '-fullcalendar', plugin_dir_url(__FILE__) . 'css/main.css', array(), $this->version, 'all');
             wp_enqueue_style($this->fit_plugin . '-bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css', array(), $this->version, 'all');
+            wp_enqueue_style($this->fit_plugin . '-datatable', '//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css', array(), $this->version, 'all');
+            wp_enqueue_style($this->fit_plugin . '-datatable-resp', 'https://cdn.datatables.net/responsive/2.2.6/css/responsive.bootstrap4.min.css', array(), $this->version, 'all');
+            //wp_enqueue_style($this->fit_plugin . '-datatable-btst', 'https://cdn.datatables.net/1.10.22/css/dataTables.bootstrap4.min.css', array(), $this->version, 'all');
+            wp_enqueue_style($this->fit_plugin . '-datatable-btst-gr', 'https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.bootstrap4.min.css', array(), $this->version, 'all');
+            wp_enqueue_style($this->fit_plugin . '-fullcalendar', plugin_dir_url(__FILE__) . 'css/main.css', array(), $this->version, 'all');
+
         }
     }
 
@@ -117,6 +122,11 @@ class backend
 
         if ('toplevel_page_fit_booking' === $hook) {
             wp_enqueue_script($this->fit_plugin, plugin_dir_url(__FILE__) . 'js/main.js', array('jquery'), $this->version, false);
+            wp_enqueue_script($this->fit_plugin . '-datatable', '//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js', array('jquery'), $this->version, false);
+            wp_enqueue_script($this->fit_plugin . '-datatable-resp', 'https://cdn.datatables.net/responsive/2.2.6/js/dataTables.responsive.min.js', array('jquery'), $this->version, false);
+            wp_enqueue_script($this->fit_plugin . '-datatable-resp-btstr', 'https://cdn.datatables.net/responsive/2.2.6/js/responsive.bootstrap4.min.js', array('jquery'), $this->version, false);
+            wp_enqueue_script($this->fit_plugin . '-datatable-btstr', 'https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js', array('jquery'), $this->version, false);
+            wp_enqueue_script($this->fit_plugin . '-datatable-grp', 'https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js', array('jquery'), $this->version, false);
             wp_enqueue_script($this->fit_plugin . '-fullcalendar', plugin_dir_url(__FILE__) . 'js/fit-plugin-admin.js', array('jquery'), $this->version, false);
             wp_enqueue_script($this->fit_plugin . '-bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js', array('jquery'), $this->version, false);
 
@@ -182,6 +192,21 @@ class backend
         }
 
         return $trainers ? $trainers : [];
+    }
+
+    private function product_list()
+    {
+        $products = new shopifyApi();
+        $pool = array();
+        if ($products->get_products()) {
+            foreach ($products->get_products() as $product) {
+                foreach ($product->variants as $variant) {
+                    $pool[$variant->id] = $product->title . ' ' . $variant->title;
+                }
+            }
+        }
+
+        return $pool;
     }
 
     /**
@@ -322,21 +347,6 @@ class backend
             'active' => true,
             'description' => '',
         ));
-    }
-
-    private function product_list()
-    {
-        $products = new shopifyApi();
-        $pool = array();
-        if ($products->get_products()) {
-            foreach ($products->get_products() as $product) {
-                foreach ($product->variants as $variant) {
-                    $pool[$variant->id] = $product->title . ' ' . $variant->title;
-                }
-            }
-        }
-
-        return $pool;
     }
 
     public function trainer_post_type(): void
@@ -538,18 +548,57 @@ class backend
     public function fit_booking_create_admin_page()
     {
         $this->fit_booking_options = get_option('fit_booking_option_name'); ?>
-
         <div class="wrap">
-            <?php settings_errors(); ?>
+
             <form method="post" class="fit-config-form" action="options.php">
+                <?php settings_errors(); ?>
                 <?php
                 settings_fields('fit_booking_option_group');
                 do_settings_sections('fit-booking-admin');
                 ?>
-                <div id='loading'>loading...</div>
-                <div id='calendar'></div>
             </form>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#view-calendar">Calendar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#orders">Customer list</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active container" id="view-calendar">
+                    <div id='calendar'></div>
+                </div>
+                <div class="tab-pane container py-3" id="orders">
+                    <table id="event_orders" class="" style="width:100%">
+                        <thead>
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Event Date</th>
+                            <th>Event Room</th>
+                            <th>Event Trainer</th>
+                            <th>Order Id</th>
+                        </tr>
+                        </thead>
+                        <tfoot>
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Event Date</th>
+                            <th>Event Room</th>
+                            <th>Event Trainer</th>
+                            <th>Order Id</th>
+                        </tr>
+                        </tfoot>
+                    </table>
+
+
+                </div>
+            </div>
         </div>
+
     <?php }
 
     public function fit_booking_create_admin_setting_page()

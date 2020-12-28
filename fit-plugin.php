@@ -73,6 +73,7 @@ function activate_fit_plugin()
             event_id bigint(20) NOT NULL,
             name TEXT NOT NULL default '',
             surname TEXT NOT NULL default '',            
+            email TEXT NOT NULL default '',            
             PRIMARY KEY  (id)
             )
             {$charset_collate};";

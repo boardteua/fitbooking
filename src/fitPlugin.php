@@ -188,6 +188,7 @@ class fitPlugin
         /* --- ajax actions --- */
 
         $this->loader->add_action('wp_ajax_table_actions', $plugin_table, 'table_actions');
+        $this->loader->add_action('wp_ajax_get_orders', $plugin_table, 'get_orders');
         $this->loader->add_action('wp_ajax_get_options', $backend, 'get_options_ajax');
     }
 
