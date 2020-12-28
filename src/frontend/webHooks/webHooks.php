@@ -16,10 +16,10 @@ class webHooks
         if ($this->fit_booking_options) {
             $this->client = new Shopify\PrivateApi(array(
                 'api_version' => '2020-10/',
-                'api_key' => array_key_exists('api_key_0', $this->fit_booking_options) ? $this->fit_booking_options['api_key_0'] : '0118036ed7bea77e1b194d46edfd6554',
-                'password' => array_key_exists('api_pass_0', $this->fit_booking_options) ? $this->fit_booking_options['api_pass_0'] : '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',
-                'shared_secret' => array_key_exists('api_shared_secret_0', $this->fit_booking_options) ? $this->fit_booking_options['api_shared_secret_0'] : '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',
-                'myshopify_domain' => array_key_exists('api_shop_domain_0', $this->fit_booking_options) ? $this->fit_booking_options['api_shop_domain_0'] : 'org100h.myshopify.com',
+                'api_key' => array_key_exists('api_key_0', $this->fit_booking_options) ? $this->fit_booking_options['api_key_0'] : '63fa022de5d39ebe5aec2dee6ad5a3c4',
+                'password' => array_key_exists('api_pass_0', $this->fit_booking_options) ? $this->fit_booking_options['api_pass_0'] : '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',
+                'shared_secret' => array_key_exists('api_shared_secret_0', $this->fit_booking_options) ? $this->fit_booking_options['api_shared_secret_0'] : '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',
+                'myshopify_domain' => array_key_exists('api_shop_domain_0', $this->fit_booking_options) ? $this->fit_booking_options['api_shop_domain_0'] : 'repose-space.co.uk',
             ));
         } else {
             $this->client = false;
@@ -61,6 +61,7 @@ class webHooks
             return false;
 
         $service = new Shopify\Service\WebhookService($this->client);
+
         $attr = array(
             'topic' => $hook
         );
@@ -81,12 +82,18 @@ class webHooks
 
     public function remove_hook($hook_id)
     {
+        if (!$this->client)
+            return false;
+
         $service = new Shopify\Service\WebhookService($this->client);
         $service->delete($hook_id);
     }
 
     public function remove_all_hooks()
     {
+        if (!$this->client)
+            return false;
+
         $service = new Shopify\Service\WebhookService($this->client);
 
         foreach ($service->all() as $hook) {
@@ -98,6 +105,9 @@ class webHooks
 
     private function get_all_hooks()
     {
+        if (!$this->client)
+            return false;
+
         $service = new Shopify\Service\WebhookService($this->client);
         return $service->all();
     }

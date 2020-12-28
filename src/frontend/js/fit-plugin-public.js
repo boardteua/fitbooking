@@ -11,7 +11,7 @@ jQuery(document).ready(function ($) {
     });
 
     $('.event-wrp').on('click', function () {
-        openModal($(this).data('event-id'), 'book');
+        openModal($(this).data('event-id'), $(this).data('product'), $(this).data('price'), 'book');
     });
 
     function filter_rooms() {
@@ -55,7 +55,7 @@ jQuery(document).ready(function ($) {
                 items: 2,
                 nav: false
             },
-            1000: {
+            1200: {
                 items: 3,
                 nav: true
             },
@@ -78,7 +78,7 @@ jQuery(document).ready(function ($) {
         }
     });
 
-    function openModal(args, state) {
+    function openModal(args, product, price, state) {
 
         let dialogModal = getModal();
 
@@ -98,7 +98,7 @@ jQuery(document).ready(function ($) {
             '<div class="modal-body">' +
             '<div class="container-fluid">' +
             '<div class="row">' +
-            '<div class="col-sm-3 col-12 modal-sidebar">' +
+            '<div class="col-lg-4 col-12 order-lg-1 order-2 modal-sidebar">' +
             '<div class="img-holder owl-carousel owl-theme"> ' +
             '</div>' +
             '<h3 class="room-title"></h3>' +
@@ -110,7 +110,7 @@ jQuery(document).ready(function ($) {
             '<p class="trainer-description"></p>' +
             '<h5 class="event-duration"></h5>' +
             '</div>' +
-            '<div class="col-sm-9 col-12 place-take d-flex align-content-center justify-content-center">' +
+            '<div class="col-lg-8 col-12 place-take d-flex align-content-center justify-content-center  order-lg-2 order-1">' +
             '<div class="trainer-place">' +
             '</div>' +
             '<div id="holder" class="variant-place-selector my-2 w-100 d-flex align-items-center justify-content-center">' +
@@ -150,7 +150,7 @@ jQuery(document).ready(function ($) {
                     id: args
                 },
                 success: function (out) {
-                    console.log(out);
+                    //console.log(out);
 
                     $.each(fit.rooms, function (index, val) {
                         if (val.ID == out.data.room_id) {
@@ -211,13 +211,13 @@ jQuery(document).ready(function ($) {
                         hour12: false,
                     }).format(new Date(out.data.end));
 
-                    $(dialogModal).find('.modal-title').append(' (' + start_h + ':' + start_m + ' - ' + end_h + ':' + end_m + ')');
+                    $(dialogModal).find('.modal-title').append(' <span>(' + start_h + ':' + start_m + ' - ' + end_h + ':' + end_m + ')' + '</span>');
 
                     let settings = {
                         rowCssPrefix: 'row-',
                         colCssPrefix: 'col-',
-                        placeWidth: 3,
-                        placeHeight: 3,
+                        placeWidth: 40,
+                        placeHeight: 40,
                     };
 
 
@@ -231,18 +231,21 @@ jQuery(document).ready(function ($) {
                     let ResizeFunction = function () {
 
                         if (window.innerWidth >= 1200) {
-                            settings.placeWidth = 3;
-                            settings.placeHeight = 3;
+                            settings.placeWidth = 45;
+                            settings.placeHeight = 45;
                         }
 
                     }
-                    ResizeFunction()
-                    $(dialogModal).find('#places').css('width', rows * settings.placeWidth + 'vw');
-                    $(dialogModal).find('#places').css('height', cols * settings.placeHeight + 'vw');
+
+
+                    $(dialogModal).find('#places').css('width', rows * settings.placeWidth + 20 + 'px');
+                    $(dialogModal).find('#places').css('height', cols * settings.placeHeight + 20 + 'px');
+
+                    ResizeFunction();
                     $(window).resize(ResizeFunction).trigger('resize');
                     let str = [];
                     let reservedPlaces = out.data.places_pool.split(',');
-                    console.log(reservedPlaces);
+                    //console.log(reservedPlaces);
                     for (let i = 0; i < rows; i++) {
                         for (let j = 0; j < cols; j++) {
                             let placeNo = (i + j * rows + 1);
@@ -251,7 +254,7 @@ jQuery(document).ready(function ($) {
                                 className += ' selectedPlace';
                             }
                             str.push('<li class="' + className + '"' +
-                                'style="top:' + (j * settings.placeHeight).toString() + 'vw;left:' + (i * settings.placeWidth).toString() + 'vw">' +
+                                'style="top:' + (j * settings.placeHeight).toString() + 'px;left:' + (i * settings.placeWidth).toString() + 'px">' +
                                 '<a title="' + placeNo + '">' + placeNo + '</a>' +
                                 '</li>');
                         }
@@ -259,15 +262,15 @@ jQuery(document).ready(function ($) {
 
                     $(dialogModal).find('#places').html(str.join(''));
 
-                    let price = $('.room_wrp').data('price');
-                    $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
-
+                    //let price = $('.room_wrp').data('price');
+                    $(dialogModal).find('.price').html('Price: <span>' + fit.crns.replace('{{amount}}', price) + '</span>');
+                    let price_ = price;
                     $(dialogModal).find('#places').on('click', '.place', function () {
                         if ($(this).hasClass('selectedPlace')) {
                             alert('This place is already reserved');
                         } else {
                             $(this).toggleClass('selectingPlace');
-                            let price = $('.room_wrp').data('price') * $('#places li.selectingPlace').length;
+                            let price = price_ * $('#places li.selectingPlace').length;
                             $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
                         }
                     });
@@ -275,7 +278,7 @@ jQuery(document).ready(function ($) {
                     $('#submit_event').on('click', function () {
                         let pool = [], pool_all = [];
 
-                        let product = $('.room_wrp').data('product');
+                        // let product = $('.room_wrp').data('product');
                         let note = $('#customer_note').val().trim();
                         let room = $(dialogModal).find('.room-title').text().trim();
                         let trainer = $(dialogModal).find('.place-take .room-trainer').text().trim();
@@ -300,7 +303,8 @@ jQuery(document).ready(function ($) {
                             '&attributes["Select_Place"]=' + pool +
                             '&note=' + note;
                         if (qty > 0) {
-                            window.open(permalink, '_blank');
+                            //window.location.href = permalink;
+                             window.open(permalink, '_blank');
                         } else {
                             alert('Select Place');
                         }
@@ -310,7 +314,7 @@ jQuery(document).ready(function ($) {
 
                 },
                 error: function (err) {
-                    alert(err);
+                    console.log(err.split(','));
                 }
             });
         }
@@ -335,7 +339,7 @@ jQuery(document).ready(function ($) {
         modal.setAttribute('aria-hidden', 'true');
         modal.setAttribute('data-backdrop', 'false');
         modal.innerHTML =
-            '<div class="modal-dialog modal-xl  modal-dialog-centered book-dialog" role="document">' +
+            '<div class="modal-dialog modal-xl book-dialog" role="document">' +
             '<div class="modal-content book-content"></div>' +
             '</div>';
         document.body.appendChild(modal);

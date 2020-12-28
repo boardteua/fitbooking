@@ -27,9 +27,12 @@ $utils = utils::getInstance();
 ?>
 <li data-event-id="<?= $data->event['id'] ?>"
     data-trainer-id="<?= $utils->get_trainers($data->event['trainer_id'])[0]->ID ?>"
+    data-product="<?= $data->event['product_id'] ?>"
+    data-price="<?= $utils->get_price($data->event['product_id']) ?>"
     class="event-wrp list-group-item">
-    <strong class="eventr-date mr-1"><?= date_format(date_create($data->event['start']), "H:i") ?></strong>
-    <i clas="event-title"><?= $data->event['title'] ?></i>
-    <span class="event-trainer text-black-50 ml-auto"><?= $utils->get_trainers($data->event['trainer_id'])[0]->post_title ?> <span class="mini-ava ml-2"  ><img
-               src="<?= $utils->get_trainers($data->event['trainer_id'])[0]->trainer_photos[0] ?>"/></span> </span>
+    <strong class="eventr-date mr-2"><?= date_format(date_create($data->event['start']), "H:i") ?></strong>
+    <span class="event-title"><?= $data->event['title'] ?></span>
+    <span class="event-trainer text-black-50 ml-auto"><?= $utils->get_trainers($data->event['trainer_id'])[0]->post_title ?> <span
+                class="mini-ava ml-2"><img
+                    src="<?= $utils->get_trainers($data->event['trainer_id'])[0]->trainer_photos[0] ?>"/></span> </span>
 </li>

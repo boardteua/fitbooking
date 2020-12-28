@@ -2,43 +2,102 @@
 * All of the CSS for your public-facing functionality should be
 * included in this file.
 */
+@font-face {
+    font-family: 'DINNeuzeitGrotesk LT';
+    src: url('../font/DINNeuzeitGroteskLT-Light.woff2') format('woff2'),
+    url('../font/DINNeuzeitGroteskLT-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
 
 
-
-@media (max-width: 1210px) {
-    #places .place {
-        width: 4vw !important;
-        height: 4vw !important;
-    }
+.modal-content {
+    border-radius: 0 !important;
 }
 
 .book-dialog .book-content {
     box-shadow: 0 5px 10px rgba(0, 0, 0, .3);
 }
 
+.form-group label, .form-group input, .form-group option {
+    font-family: 'DINNeuzeitGrotesk LT';
+}
 
 .room_wrp .card-body h3 {
     margin: 0;
 }
 
 .room_wrp {
-    max-width: 1200px;
+    font-family: 'DINNeuzeitGrotesk LT';
+}
+
+.owl-carousel .owl-stage {
+    display: flex;
+}
+
+.owl-carousel .caption {
+    text-align: center;
+    font-family: 'DINNeuzeitGrotesk LT';
 }
 
 .room_wrp .card-body {
     flex: 0 1 auto;
     -ms-flex: 0 1 auto;
-    background-color: #eee;
+    background-color: #fff;
+    font-family: 'DINNeuzeitGrotesk LT';
 }
 
+.card {
+    border: 1px solid #e3e3e3;
+    border-radius: 0 !important;
+}
+
+.booking-plugin {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.room-filters .form-control {
+    border: 1px solid #e3e3e3;
+    height: 50px;
+    padding: 0 20px;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+
+.room-filters .form-control:active, .room-filters .form-control:focus {
+    outline: none;
+    border-color: #000;
+    box-shadow: none;
+}
+
+.fit-table-wrp h3 {
+    font-family: 'DINNeuzeitGrotesk LT';
+    text-transform: uppercase;
+    font-weight: normal;
+    text-align: center;
+}
 
 .card-group .owl-stage-outer {
     z-index: 100;
     position: relative;
+    display: flex;
 }
 
 .event-wrp:hover {
     background-color: #f7f7f7;
+}
+
+.eventr-date {
+    font-size: 14px;
+    line-height: 26px;
+}
+
+.event-title {
+    font-size: 14px;
+    line-height: 25px;
 }
 
 .event-wrp {
@@ -108,21 +167,31 @@
 
 .book-dialog .modal-title {
     margin: 0;
+    font-family: 'DINNeuzeitGrotesk LT';
+}
+
+.book-dialog .modal-title span {
+    font-size: 16px;
+    font-weight: 300;
+    color: #444;
 }
 
 .book-dialog .room-title {
     margin: 0 15px;
     color: #555;
+    font-family: 'DINNeuzeitGrotesk LT';
 }
 
 .book-dialog .room-trainer {
     margin: 0 15px;
     color: #555;
+    font-family: 'DINNeuzeitGrotesk LT';
 }
 
 .room-description, .trainer-description {
     font-size: 13px;
     margin: 0 15px 15px;
+    font-family: 'DINNeuzeitGrotesk LT';
 }
 
 .book-dialog .img-holder {
@@ -130,11 +199,15 @@
 }
 
 /**/
-
+selector + [data-readmore-toggle], selector[data-readmore] {
+    display: block;
+    width: 100%;
+}
 
 .variant-place-selector #places {
     position: relative;
     width: 100%;
+    min-height: 100px; /* border-radius: .25rem; */
     margin: 15px 0;
 
     overflow: hidden;
@@ -157,20 +230,21 @@
 }
 
 .variant-place-selector #places li a {
-    font-size: 1em;
-    color: #fff;
+    font-size: 14px;
+    color: #555;
+    font-family: 'DINNeuzeitGrotesk LT';
 }
 
 .variant-place-selector #places .place {
-    height: 36px;
-    width: 36px;
-    background-color: #C4C4C4;
+    height: 32px;
+    width: 32px;
+    background-color: #fff;
+    border: 1px solid #e2e2e2;
     text-align: center;
-    line-height: 1em;
+    line-height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 5px;
 
 }
 
@@ -203,10 +277,10 @@
 }
 
 .place-take .trainer-place {
-    width: 100px;
-    height: 100px;
-    border-radius: 50px;
-    margin-bottom: 15px;
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+    margin-bottom: 30px;
     margin-top: 15px;
     display: flex;
     align-items: center;
@@ -218,8 +292,8 @@
 }
 
 .trainer-photo {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     position: absolute;
 }
 
@@ -227,8 +301,9 @@
     background-color: #e0e0e0 !important;
 }
 
-.customer-note-wrp h4 {
+.customer-note-wrp h4, .price {
     margin-top: 0;
+    font-family: 'DINNeuzeitGrotesk LT';
 }
 
 .customer-note-wrp {
@@ -236,9 +311,16 @@
 
 }
 
+#customer_note:focus {
+    box-shadow: none;
+    border: 1px solid #000;
+
+}
+
 #customer_note {
     width: 100%;
     min-height: 100px;
+    border-radius: 0;
 }
 
 .button-wrp {
@@ -257,4 +339,14 @@
     object-fit: cover;
     overflow: hidden;
 
+}
+
+.fc-event-main {
+    overflow: hidden;
+}
+
+button#submit_event {
+    background: #000;
+    border-radius: 0;
+    border: none;
 }

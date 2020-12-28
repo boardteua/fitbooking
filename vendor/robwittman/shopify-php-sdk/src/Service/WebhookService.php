@@ -28,6 +28,7 @@ class WebhookService extends AbstractService
      */
     public function count(array $params = [])
     {
+
         $response = $this->request('webhooks/count.json','GET',  $params);
 
         return $response['count'];

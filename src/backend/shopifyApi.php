@@ -33,18 +33,31 @@ class shopifyApi
     {
         if (!$this->client)
             return false;
-        $service = new Shopify\Service\ProductService($this->client);
 
-        $attr = array(
-            'collection_id' => $this->fit_booking_options['collection_id_0'],
-            'limit' => 250
-        );
-        return $service->all($attr); #Fetch all products, with optional params
+        try {
+            $service = new Shopify\Service\ProductService($this->client);
+
+            $attr = array(
+                'collection_id' => $this->fit_booking_options['collection_id_0'],
+                'limit' => 250
+            );
+
+            return $service->all($attr); #Fetch all products, with optional params
+
+
+
+        } catch ( Exception $e ) {
+
+            return new \WP_Error('api_error', print_r($e));
+
+        }
     }
-
 
     public function get_price($id)
     {
+        if (!$this->client)
+            return false;
+
         $service = new Shopify\Service\ProductVariantService($this->client);
         $product = $service->get($id); # Get a single product
         return $product->price;
@@ -52,6 +65,9 @@ class shopifyApi
 
     public function get_store_info()
     {
+        if (!$this->client)
+            return false;
+
         $service = new Shopify\Service\ShopService($this->client);
         return $service->get();
     }

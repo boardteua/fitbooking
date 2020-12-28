@@ -24,17 +24,23 @@ use fitplugin\frontend\templates;
 $template = new templates();
 
 $today = date("ymd") == date_format(date_create($data->day), "ymd") ? 'today' : '';
-
-?>
-<div data-date="<?= esc_attr(date_format(date_create($data->day), "ymd")) ?>" class="card item <?= $today ?>" >
-    <div class="card-body">
-        <h3 class="card-title"><?= esc_attr(date_format(date_create($data->day), "(M, d) l")) ?></h3>
+$now = new DateTime();
+$date = new DateTime($data->day);
+$show_post = false;
+$past = $now >= $date ? 'past' : '';
+if ($show_post === false && $past !== 'past'):
+    ?>
+    <div data-date="<?= esc_attr(date_format(date_create($data->day), "ymd")) ?>"
+         class="card item <?= $today ?> <?= $past ?>">
+        <div class="card-body">
+            <h3 class="card-title"><?= esc_attr(date_format(date_create($data->day), "(M, d) l")) ?></h3>
+        </div>
+        <ul class="list-group list-group-flush">
+            <?php
+            foreach ($data->events as $event) {
+                $template->set_template_data(array('event' => $event))->get_template_part('event');
+            }
+            ?>
+        </ul>
     </div>
-    <ul class="list-group list-group-flush">
-        <?php
-        foreach ($data->events as $event) {
-            $template->set_template_data(array('event' => $event))->get_template_part('event');
-        }
-        ?>
-    </ul>
-</div>
+<?php endif; ?>

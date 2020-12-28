@@ -125,6 +125,7 @@ class backend
                     'nonce' => wp_create_nonce('fit-nonce'),
                     'rooms' => $this->get_rooms(),
                     'trainers' => $this->get_trainers(),
+                    'products' => $this->product_list()
                 )
             );
         }
@@ -254,7 +255,7 @@ class backend
                 ),
                 array(
                     'key' => 'field_5fa42ae25219g',
-                    'label' => 'Product Name',
+                    'label' => 'Product Name (For dev)',
                     'name' => 'product_id',
                     'type' => 'select',
                     'choices' => $this->product_list()
@@ -504,7 +505,7 @@ class backend
             'capability_type' => 'page',
         );
 
-        register_post_type('event', $args);
+        //register_post_type('event', $args);
 
     }
 

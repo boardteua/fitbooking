@@ -51,7 +51,7 @@ final class utils
         foreach ($posts as $room) {
 
 
-            $images = get_field('gym_gallery',$room->ID);
+            $images = get_field('gym_gallery', $room->ID);
 
             if ($images !== null) {
                 foreach (explode(',', $images) as $image) {
@@ -131,7 +131,7 @@ final class utils
 
     public function get_currency(): string
     {
-        return $this->client->get_store_info()->money_format;
+        return $this->client->get_store_info() ?  $this->client->get_store_info()->money_format : '';
     }
 
     public function get_price($id): string

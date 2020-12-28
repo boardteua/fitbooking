@@ -101,6 +101,7 @@ class frontend
 
         wp_enqueue_style($this->fit_plugin, plugin_dir_url(__FILE__) . 'css/fit-plugin-public.css', array(), $this->version, 'all');
         wp_enqueue_style($this->fit_plugin . '-owl', plugin_dir_url(__FILE__) . 'css/owl.carousel.css', array(), $this->version, 'all');
+        wp_enqueue_style($this->fit_plugin . '-owl', plugin_dir_url(__FILE__) . 'css/owl.carousel.css', array(), $this->version, 'all');
         wp_enqueue_style($this->fit_plugin . '-owl-theme', plugin_dir_url(__FILE__) . 'css/owl.theme.green.css', array(), $this->version, 'all');
 
 
@@ -128,6 +129,7 @@ class frontend
 
         wp_enqueue_script($this->fit_plugin, plugin_dir_url(__FILE__) . 'js/fit-plugin-public.js', array('jquery'), $this->version, false);
         wp_enqueue_script($this->fit_plugin . '-owl', plugin_dir_url(__FILE__) . 'js/owl.carousel.min.js', array('jquery'), $this->version, false);
+        wp_enqueue_script($this->fit_plugin . '-readmore',  'https://cdn.jsdelivr.net/npm/readmore-js@2.2.1/readmore.min.js', array('jquery'), $this->version, false);
         wp_localize_script($this->fit_plugin, 'fit',
             array(
                 'ajaxurl' => admin_url('admin-ajax.php'),

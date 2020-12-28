@@ -3,6 +3,11 @@
  * included in this file.
  */
 
+.modal-title small{
+    font-size:12px;
+
+}
+
 #script-warning {
     display: none;
     background: #eee;
@@ -36,9 +41,8 @@
 
 .variant-place-selector #places {
     position: relative;
-    background: #f7f7f7;
     width: 100%;
-    min-height: 200px;
+    min-height: 150px;
 }
 
 .variant-place-selector #places li {
@@ -65,6 +69,10 @@
     background-color: #007bff;
     text-align: center;
     line-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
 }
 
 .variant-place-selector #places .selectedPlace {
@@ -84,4 +92,37 @@
 .fc-event-main strong {
     display: block;
     margin-bottom: 2px;
+}
+
+.fc-dayGridMonth-view .fc-daygrid-event i,  .fc-dayGridMonth-view .fc-daygrid-event strong:last-child{
+    display: none;
+}
+
+.fc-event-main{
+    overflow: hidden;
+}
+
+.disable-calendar{
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+
+.disable-calendar:before{
+    content: "Loading...";
+    position: absolute;
+    width: 60%;
+    height: 60%;
+
+    display:flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 80px;
+    z-index: 1000;
+}
+
+.form-table th{
+
+    width: 100px;
 }

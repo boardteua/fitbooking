@@ -83,6 +83,7 @@ class table
         if (isset($_POST['room_id'])) {
             $room_id = filter_var(strip_tags($_POST['room_id']), FILTER_SANITIZE_STRING);
         }
+
         if (isset($_POST['ti_data'])) {
             $event = $_POST['ti_data'];
             if (array_key_exists('places_pool', $event) && is_array($event['places_pool'])) {
@@ -139,9 +140,7 @@ class table
     protected function update_db_calendar($input)
     {
         global $wpdb;
-        $input['day'] = date_format(date_create($input['start']), "Y-m-d");
-        $input['start'] = date_format(date_create($input['start']), "Y-m-d H:i:s");
-        $input['end'] = date_format(date_create($input['end']), "Y-m-d H:i:s");
+        $input = $this->process_date($input);
 
         $c_items = $wpdb->update("{$this->table_name}", $input, array('id' => $input['id']));
 
@@ -159,6 +158,10 @@ class table
         }
         $c_items = $wpdb->update("{$this->table_name}", $input, array('id' => $input['id']));
 
+        if ($c_items !== 1) {
+            return new \WP_Error('update_error', 'Event update db error');
+        }
+
         return $c_items;
     }
 
@@ -166,15 +169,20 @@ class table
     {
         global $wpdb;
 
-        $input['day'] = date_format(date_create($input['start']), "Y-m-d");
-        $input['start'] = date_format(date_create($input['start']), "Y-m-d H:i:s");
-        $input['end'] = date_format(date_create($input['end']), "Y-m-d H:i:s");
-
+        $input = $this->process_date($input);
         $c_items = $wpdb->insert("{$this->table_name}", $input);
         if ($c_items !== 1) {
             return new \WP_Error('insert_error', 'Event insert db error');
         }
         return $c_items;
+    }
+
+    private function process_date($event)
+    {
+        $event['day'] = date_format(date_create($event['start']), "Y-m-d");
+        $event['start'] = date_format(date_create($event['start']), "Y-m-d H:i:s");
+        $event['end'] = date_format(date_create($event['end']), "Y-m-d H:i:s");
+        return $event;
     }
 
     protected function get_db_calendar_by_room($id)

@@ -27,7 +27,7 @@ $utils = utils::getInstance();
 
 $template->get_template_part('filters');
 ?>
-<div class="container">
+<div class="container-fluid booking-plugin">
     <div class="row fit-table-wrp">
         <?php
         foreach ($utils->group_by('room_id', $data->rooms) as $room => $days) {

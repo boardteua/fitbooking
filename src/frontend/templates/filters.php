@@ -27,7 +27,7 @@ $utils = utils::getInstance();
 
 <div class="container room-filters">
     <div class="row">
-        <form class="d-flex w-100 justify-content-md-start justify-content-center">
+        <form class="d-flex w-100 justify-content-md-start justify-content-center mx-2">
             <div class="form-group mr-2 w-100">
                 <label for="filter_by_room">Select Gym</label>
                 <select class="form-control" id="filter_by_room" >

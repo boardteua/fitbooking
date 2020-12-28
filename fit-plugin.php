@@ -57,6 +57,7 @@ function activate_fit_plugin()
             end DATETIME NOT NULL,
             color varchar(16) NOT NULL default '',
             title TEXT NOT NULL default '',
+            product_id TEXT NOT NULL default '',
             trainer_id bigint(20) NOT NULL,
             room_id bigint(20) NOT NULL,
             places_pool TEXT NOT NULL default '',            

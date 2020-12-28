@@ -34,15 +34,21 @@ $utils = utils::getInstance();
          data-product="<?= $data->room[0]->product_id ?>"
          data-price="<?= $utils->get_price($data->room[0]->product_id) ?>">
         <h3><?= esc_attr($data->room[0]->post_title) ?></h3>
-        <div class="card-group owl-carousel owl-theme">
-            <?php
-            foreach ($utils->group_by('day', $data->days) as $day => $events) {
-                $template->set_template_data(array(
-                    'day' => $day,
-                    'events' => $events
-                ))->get_template_part('events');
-            }
-            ?>
-        </div>
+        <?php if ($data->days): ?>
+            <div class="card-group owl-carousel owl-theme">
+                <?php
+                foreach ($utils->group_by('day', $data->days) as $day => $events) {
+                    $template->set_template_data(array(
+                        'day' => $day,
+                        'events' => $events
+                    ))->get_template_part('events');
+                }
+                ?>
+            </div>
+        <?php else: ?>
+            <div class="card-group no-item">
+                No Events in Gym
+            </div>
+        <?php endif; ?>
     </div>
 <?php endif; ?>

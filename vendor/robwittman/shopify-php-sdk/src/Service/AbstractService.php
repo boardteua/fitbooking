@@ -84,6 +84,7 @@ abstract class AbstractService
         } else {
             $args['json'] = $params;
         }
+
         $this->lastResponse = $this->client->send($request, $args);
         return json_decode(
             $this->lastResponse->getBody()->getContents(),

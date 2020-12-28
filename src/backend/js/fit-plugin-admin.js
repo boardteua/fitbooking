@@ -1,11 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-
-
         let calendarEl = document.getElementById('calendar');
-        //filterRooms();
 
-        //filterRooms();
-        //calendar.refetchEvents();
         function calendar_render(m_room_id) {
             let calendar = new FullCalendar.Calendar(calendarEl, {
                 headerToolbar: {
@@ -14,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     right: 'dayGridMonth,timeGridWeek,listWeek'
                 },
                 initialView: 'timeGridWeek',
-                timeZone: 'local',
                 allDaySlot: false,
                 height: 700,
                 aspectRatio: 1,
@@ -45,8 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 slotMinTime: "09:00",
                 slotMaxTime: "18:00",
                 scrollTime: "09:00",
-                slotDuration: '00:15',
-                slotLabelInterval: '00:15',
                 firstDay: 1,
                 initialDate: Date.now(),
                 editable: true,
@@ -83,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             success: function (out) {
                                 calendar.getEventById(args.event.id).remove();
                                 calendar.refetchEvents();
-                                jQuery('#dialogModal').modal('toggle');
+                                //jQuery('#dialogModal').modal('toggle');
                             },
                             error: function (err) {
                                 alert(err);
@@ -99,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         let title = jQuery('#event_title').val();
                         let room_id = jQuery('#room_edit').val();
                         let trainer_id = jQuery('#trainer_edit').find(':selected').data('id');
+                        let product_id = jQuery('#product_edit').find(':selected').data('id');
                         let pool = [], item;
                         if (event.extendedProps.places_pool != '') {
                             pool.push(event.extendedProps.places_pool);
@@ -115,9 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             title: title !== '' ? title : args.event.title,
                             room_id: room_id !== '' ? room_id : args.event.room_id,
                             trainer_id: trainer_id,
+                            product_id: product_id,
                             places_pool: pool.join(','),
-                            start: args.event.start.toLocaleString(),
-                            end: args.event.end.toLocaleString(),
+                            start: args.event.start.toLocaleString('uk-UA'),
+                            end: args.event.end.toLocaleString('uk-UA'),
 
                         };
 
@@ -133,10 +127,15 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             success: function (out) {
                                 calendar.refetchEvents();
+
                                 jQuery('#dialogModal').modal('toggle');
+                                console.log('success');
+                                console.log(out);
                             },
                             error: function (err) {
-                                alert(err);
+
+                                console.log('error');
+                                console.table(err);
                             }
                         });
                     });
@@ -149,7 +148,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         let title = jQuery('#event_title').val();
                         let room_id = jQuery('#select_room_0').find(':selected').data('id');
                         let trainer_id = jQuery('#trainer_edit').find(':selected').data('id');
-                        console.log(room_id);
+                        let product_id = jQuery('#product_edit').find(':selected').data('id');
+                        console.log(product_id);
                         if (title !== '') {
                             let pool = [], item;
                             jQuery.each(jQuery('#places li.selectingPlace a'), function (index, value) {
@@ -158,13 +158,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
 
                             let eData = {
-                                start: args.start.toLocaleString(),
-                                end: args.end.toLocaleString(),
+                                start: args.start.toLocaleString('uk-UA'),
+                                end: args.end.toLocaleString('uk-UA'),
                                 title: title,
                                 room_id: room_id,
                                 trainer_id: trainer_id,
+                                product_id: product_id,
                                 places_pool: pool.length < 2 ? pool : pool.join(','),
                             };
+
+                            console.log('Fetching data:');
+                            console.log(eData);
+
                             jQuery.ajax({
                                 url: ajaxurl,
                                 type: 'POST',
@@ -179,9 +184,13 @@ document.addEventListener('DOMContentLoaded', function () {
                                     calendar.unselect();
                                     calendar.refetchEvents();
                                     jQuery('#dialogModal').modal('toggle');
+
+                                    console.log('success');
+                                    console.log(out);
                                 },
                                 error: function (err) {
-                                    alert(err);
+                                    console.log('error');
+                                    console.table(err);
                                 }
                             });
                         }
@@ -189,8 +198,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 eventResize: function (args) {
                     let eData = {
-                        start: args.event.start.toLocaleString(),
-                        end: args.event.end.toLocaleString(),
+                        start: args.event.start.toLocaleString('uk-UA'),
+                        end: args.event.end.toLocaleString('uk-UA'),
                         id: args.event.id,
                     };
                     jQuery.ajax({
@@ -213,8 +222,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 eventDrop: function (args) {
                     let eData = {
-                        start: args.event.start.toLocaleString(),
-                        end: args.event.end.toLocaleString(),
+                        start: args.event.start.toLocaleString('uk-UA'),
+                        end: args.event.end.toLocaleString('uk-UA'),
                         id: args.event.id,
                     };
                     jQuery.ajax({
@@ -231,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             calendar.refetchEvents();
                         },
                         error: function (err) {
-                            alert(err);
+                            alert(err.split(","));
                         }
                     });
                 },
@@ -245,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     let places_ids = args.event.extendedProps.places_pool;
 
 
-                    title_obj.innerHTML = args.event.title + ' ' + args.timeText;
+                    title_obj.innerHTML = args.event.title + ' <small>' + args.timeText + '</small>';
 
                     if (trainer) {
                         jQuery.each(fit.trainers, function (index, val) {
@@ -261,6 +270,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     let arrayOfDomNodes = [title_obj, trainer_obj, places_obj]
                     return {domNodes: arrayOfDomNodes}
                 },
+
+                loading: function (bool) {
+                    //alert('events are being rendered'); // Add your script to show loading
+
+
+                    if (bool) {
+                        jQuery('#calendar').addClass('disable-calendar');
+                        console.log('Calendar reloaded');
+                    } else {
+                        jQuery('#calendar').removeClass('disable-calendar');
+                    }
+                },
                 eventSources: [
                     {
                         url: ajaxurl,
@@ -270,7 +291,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             action: 'table_actions',
                             room_id: m_room_id
                         },
-                        timeZone: 'UTC',
                         eventOverlap: false,
                         error: function () {
                             alert('there was an error while fetching events!');
@@ -300,8 +320,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 switch (state) {
                     case 'add':
                         event_title = '';
-                        event_start = args.start.toLocaleString();
-                        event_end = args.end.toLocaleString();
+                        event_start = args.start.toLocaleString('uk-UA');
+                        event_end = args.end.toLocaleString('uk-UA');
                         remove = '';
                         select_room = '';
                         pool = [];
@@ -317,10 +337,18 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                             success: function (out) {
                                 let trainers = '';
+                                let products = '';
+
                                 jQuery.each(out.data['trainers'], function (index, val) {
                                     trainers += '<option value="' + val.ID + '" id="room-' + val.ID + '" data-id=' + val.ID + ' > ' + val.post_title + '</option>'
                                 });
+
+                                jQuery.each(fit.products, function (index, val) {
+                                    products += '<option value="' + index + '" id="' + index + '" data-id="' + index + '" > ' + val + '</option>'
+                                });
+
                                 jQuery('#trainer_edit').html(trainers);
+                                jQuery('#product_edit').html(products);
 
                             },
                             error: function (err) {
@@ -334,10 +362,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         event_title = args.event.title;
                         room_id = event.extendedProps.room_id;
                         trainer_id = event.extendedProps.trainer_id;
+                        product_id = event.extendedProps.product_id;
                         pool = event.extendedProps.places_pool.split(',');
                         pool_capacity = jQuery('#select_room_0').find(':selected').data('capacity').split(',');
-                        event_start = args.event.start.toLocaleString();
-                        event_end = args.event.end.toLocaleString();
+                        event_start = args.event.start.toLocaleString('uk-UA');
+                        event_end = args.event.end.toLocaleString('uk-UA');
                         remove = '<button type="button" class="btn btn-danger" data-dismiss="modal" id="event_remove" data-id="' + id + '" >Remove</button>'
                         select_room = '<div class="form-group col"><label for="event_title">Event Gym</label><select name="room_edit" id="room_edit" value="' + room_id + '" class="form-control my-2"></select></div>';
                         jQuery.ajax({
@@ -351,6 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             success: function (out) {
                                 let rooms = '';
                                 let trainers = '';
+                                let products = '';
                                 jQuery.each(out.data['rooms'], function (index, val) {
                                     let selected = val.ID == room_id ? 'selected' : '';
                                     rooms += '<option value="' + val.ID + '" id="room-' + val.ID + '" data-id=' + val.ID + ' ' + selected + '> ' + val.post_title + '</option>'
@@ -360,8 +390,15 @@ document.addEventListener('DOMContentLoaded', function () {
                                     let selected = val.ID == trainer_id ? 'selected' : '';
                                     trainers += '<option value="' + val.ID + '" id="room-' + val.ID + '" data-id=' + val.ID + ' ' + selected + '> ' + val.post_title + '</option>'
                                 });
+
+                                jQuery.each(fit.products, function (index, val) {
+                                    let selected = index == product_id ? 'selected' : '';
+                                    products += '<option value="' + index + '" id="' + index + '" data-id="' + index + '" ' + selected + '> ' + val + '</option>'
+                                });
+
                                 jQuery('#trainer_edit').html(trainers);
                                 jQuery('#room_edit').html(rooms);
+                                jQuery('#product_edit').html(products);
 
                             },
                             error: function (err) {
@@ -374,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 let html =
                     '<div class="modal-header">' +
-                    '<h5 class="modal-title" id="dialoglLabel">' + event_title + '<small class="text-info font-size-xs pl-2">' + event_start + ' -- ' + event_end + '</small></h5>' +
+                    '<h5 class="modal-title" id="dialoglLabel">' + event_title + '<small class="text-info pl-2">' + event_start + ' -- ' + event_end + '</small></h5>' +
                     '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
                     '<span aria-hidden="true">&times;</span>' +
                     '</button>' +
@@ -389,6 +426,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     '<div class="form-group col">' +
                     '<label for="event_title">Event Trainer</label> ' +
                     '<select name="trainer_edit" id="trainer_edit"  class="form-control my-2" required></select>' +
+                    '</div>' +
+                    '<div class="form-group col">' +
+                    '<label for="event_title">Attached Product</label> ' +
+                    '<select name="product_edit" id="product_edit"  class="form-control my-2" required></select>' +
                     '</div>' +
                     '</div>' +
                     '<div id="holder" class="variant-place-selector my-2">' +
