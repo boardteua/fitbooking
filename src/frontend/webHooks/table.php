@@ -20,9 +20,14 @@ class table extends \fitPlugin\backend\table
             'places_pool' => $processed_pool
         ));
 
-
-        $order['event_id'] = $data['note_attributes'][0]['value'];
         $order['order_id'] = $data['id'];
+        $order['event_id'] = $data['note_attributes'][0]['value'];
+        $order['name'] = $data['customer']['first_name'];
+        $order['surname'] = $data['customer']['last_name'];
+        $order['email'] = $data['customer']['email'];
+        $order['place'] = $data['note_attributes'][5]['value'];
+        $order['phone'] = $data['customer']['phone'];
+        $order['note'] = $data['note_attributes'][7]['value'];
 
         if ($this->get_event_order($order['order_id']) === []) {
             $this->add_event_order($order);

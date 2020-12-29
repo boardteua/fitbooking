@@ -583,12 +583,17 @@ document.addEventListener('DOMContentLoaded', function () {
             url: ajaxurl + '?action=get_orders'
         },
         responsive: true,
+        stateSave: true,
         columns: [
             {data: 'event'},
-            {data: 'event_date'},
             {data: 'event_room'},
-            {data: 'event_trainer'},
             {data: 'order_id'},
+            {data: 'name'},
+            {data: 'surname'},
+            {data: 'email'},
+            {data: 'phone'},
+            {data: 'place'},
+            {data: 'note'},
         ],
 
         columnDefs: [
@@ -598,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 "searchable": true
             },
             {
-                "targets": [2],
+                "targets": [1],
                 "visible": false,
                 "searchable": true
             },
@@ -608,6 +613,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
+    jQuery('.nav-calendar').on('click', function () {
+
+    });
 
     // Order by the grouping
     jQuery('#event_orders tbody').on('click', 'tr.group', function () {

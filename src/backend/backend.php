@@ -560,7 +560,7 @@ class backend
             <!-- Nav tabs -->
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#view-calendar">Calendar</a>
+                    <a class="nav-link nav-calendar active" data-toggle="tab" href="#view-calendar">Calendar</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#orders">Customer list</a>
@@ -577,19 +577,27 @@ class backend
                         <thead>
                         <tr>
                             <th>Event Title</th>
-                            <th>Event Date</th>
                             <th>Event Room</th>
-                            <th>Event Trainer</th>
                             <th>Order Id</th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>eMail</th>
+                            <th>Phone</th>
+                            <th>Place</th>
+                            <th>Note</th>
                         </tr>
                         </thead>
                         <tfoot>
                         <tr>
                             <th>Event Title</th>
-                            <th>Event Date</th>
                             <th>Event Room</th>
-                            <th>Event Trainer</th>
                             <th>Order Id</th>
+                            <th>Name</th>
+                            <th>Surname</th>
+                            <th>eMail</th>
+                            <th>Phone</th>
+                            <th>Place</th>
+                            <th>Note</th>
                         </tr>
                         </tfoot>
                     </table>

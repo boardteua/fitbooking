@@ -85,11 +85,15 @@ class table
             $event_trainer = $this->get_trainer_by_id($event['trainer_id'])[0]->post_title;
 
             $row = array(
-                'event' => $order['event_id'] . ' ' . $event_title,
-                'event_date' => $event_date,
+                'event' => '<strong>' . $event_title . '</strong> <span class="event-date">Date: ' . $event_date . '</span> <span class="event-trainer">Trainer: ' . $event_trainer . '</span>',
                 'event_room' => $event_room,
-                'event_trainer' => $event_trainer,
-                'order_id' => $order['order_id']
+                'order_id' => $order['order_id'],
+                'name' => $order['name'],
+                'surname' => $order['surname'],
+                'email' => $order['email'],
+                'phone' => $order['phone'],
+                'place' => $order['place'],
+                'note' => $order['note'],
             );
             $return_json[] = $row;
         }

@@ -74,6 +74,9 @@ function activate_fit_plugin()
             name TEXT NOT NULL default '',
             surname TEXT NOT NULL default '',            
             email TEXT NOT NULL default '',            
+            place TEXT NOT NULL default '',            
+            phone TEXT NOT NULL default '',            
+            note TEXT NOT NULL default '',            
             PRIMARY KEY  (id)
             )
             {$charset_collate};";
