@@ -9,31 +9,29 @@ use Shopify\ApiInterface;
 
 abstract class AbstractService
 {
+    const REQUEST_METHOD_GET = 'GET';
+    const REQUEST_METHOD_POST = 'POST';
+    const REQUEST_METHOD_PUT = 'PUT';
+    const REQUEST_METHOD_DELETE = 'DELETE';
     /**
      * Instantiated Guzzle Client for requests
      * @var Client
      */
     private $client;
-
     /**
      * The last API response from Shopify
      * @var Response|null
      */
     private $lastResponse;
 
-    const REQUEST_METHOD_GET = 'GET';
-    const REQUEST_METHOD_POST = 'POST';
-    const REQUEST_METHOD_PUT = 'PUT';
-    const REQUEST_METHOD_DELETE = 'DELETE';
+    public function __construct(ApiInterface $api)
+    {
+        $this->client = $api->getHttpHandler();
+    }
 
     public static function factory(ApiInterface $api)
     {
         return new static($api);
-    }
-
-    public function __construct(ApiInterface $api)
-    {
-        $this->client = $api->getHttpHandler();
     }
 
     /**
@@ -57,6 +55,23 @@ abstract class AbstractService
         return $this->send(new Request($method, $endpoint), $params);
     }
 
+    public function send(Request $request, array $params = array())
+    {
+        $args = array();
+        if ($request->getMethod() === 'GET') {
+            $args['query'] = $params;
+        } else {
+            $args['json'] = $params;
+        }
+
+        $this->lastResponse = $this->client->send($request, $args);
+        return json_decode(
+            $this->lastResponse->getBody()->getContents(),
+            true
+        );
+
+    }
+
     /**
      * @param $endpoint
      * @param string $method
@@ -76,19 +91,12 @@ abstract class AbstractService
         return $this->lastResponse;
     }
 
-    public function send(Request $request, array $params = array())
+    public function createCollection($className, $data)
     {
-        $args = array();
-        if ($request->getMethod() === 'GET') {
-            $args['query'] = $params;
-        } else {
-            $args['json'] = $params;
-        }
-
-        $this->lastResponse = $this->client->send($request, $args);
-        return json_decode(
-            $this->lastResponse->getBody()->getContents(),
-            true
+        return array_map(
+            function ($object) use ($className) {
+                return $this->createObject($className, $object);
+            }, $data
         );
     }
 
@@ -97,14 +105,5 @@ abstract class AbstractService
         $obj = new $className();
         $obj->setData($data);
         return $obj;
-    }
-
-    public function createCollection($className, $data)
-    {
-        return array_map(
-            function ($object) use ($className) {
-                return $this->createObject($className, $object);
-            }, $data
-        );
     }
 }

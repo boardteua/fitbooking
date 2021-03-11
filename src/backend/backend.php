@@ -23,6 +23,9 @@
 
 namespace fitPlugin\backend;
 
+use WP_REST_Request;
+use WP_REST_Response;
+
 class backend
 {
 
@@ -563,7 +566,7 @@ class backend
                     <a class="nav-link nav-calendar active" data-toggle="tab" href="#view-calendar">Calendar</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#orders">Customer list</a>
+                    <a class="nav-link" data-toggle="tab" href="#orders">Orders List</a>
                 </li>
             </ul>
 
@@ -572,7 +575,7 @@ class backend
                 <div class="tab-pane active container" id="view-calendar">
                     <div id='calendar'></div>
                 </div>
-                <div class="tab-pane container py-3" id="orders">
+                <div class="tab-pane py-3" id="orders">
                     <table id="event_orders" class="" style="width:100%">
                         <thead>
                         <tr>
@@ -585,6 +588,7 @@ class backend
                             <th>Phone</th>
                             <th>Place</th>
                             <th>Note</th>
+                            <th>Status</th>
                         </tr>
                         </thead>
                         <tfoot>
@@ -598,6 +602,7 @@ class backend
                             <th>Phone</th>
                             <th>Place</th>
                             <th>Note</th>
+                            <th>Status</th>
                         </tr>
                         </tfoot>
                     </table>
@@ -826,5 +831,47 @@ class backend
     {
         return false;
     }
+
+
+    public function cancel_customer_order()
+    {
+        $args = [
+            'order_id' => [
+                'required' => true,
+                'type' => 'integer',
+            ]
+        ];
+
+        register_rest_route('fitplugin/v1', '/cancel_order/(?P<order_id>.+)', array(
+                'methods' => 'GET',
+                'callback' => [$this, 'cancel_customer_order_proc'],
+                'permission_callback' => [$this, 'cancel_customer_order_check'],
+                'args' => $args
+            )
+        );
+    }
+
+    public function cancel_customer_order_proc(WP_REST_Request $request)
+    {
+        if (!$request)
+            return false;
+
+        $order = new shopifyApi();
+
+        $order_id = $request->get_param('order_id'); // 1
+
+        $req = $order->order_cancel($order_id);
+        if ( $req !== NULL && array_key_exists('status', $req)) {
+            return new WP_REST_Response($req['reason'], $req['status']);
+        } else {
+            return new WP_REST_Response($order_id, 200);
+        }
+    }
+
+    public function cancel_customer_order_check()
+    {
+        return true;
+    }
+
 
 }

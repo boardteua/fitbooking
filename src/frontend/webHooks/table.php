@@ -6,7 +6,7 @@ namespace fitPlugin\frontend\webHooks;
 class table extends \fitPlugin\backend\table
 {
 
-    public function orders_fulfilled($data)
+    public function orders_create($data)
     {
         if (!$data)
             return false;
@@ -19,6 +19,10 @@ class table extends \fitPlugin\backend\table
             'id' => $data['note_attributes'][0]['value'],
             'places_pool' => $processed_pool
         ));
+        $note = '';
+        if (array_key_exists(7, $data['note_attributes'])) {
+            $note = $data['note_attributes'][7]['value'];
+        }
 
         $order['order_id'] = $data['id'];
         $order['event_id'] = $data['note_attributes'][0]['value'];
@@ -27,10 +31,12 @@ class table extends \fitPlugin\backend\table
         $order['email'] = $data['customer']['email'];
         $order['place'] = $data['note_attributes'][5]['value'];
         $order['phone'] = $data['customer']['phone'];
-        $order['note'] = $data['note_attributes'][7]['value'];
+        $order['note'] = $note;
 
         if ($this->get_event_order($order['order_id']) === []) {
             $this->add_event_order($order);
+
+            error_log('order' . $order['order_id'] . 'created');
         }
 
         if (is_a($res, 'WP_Error')) {
@@ -42,11 +48,15 @@ class table extends \fitPlugin\backend\table
 
     private function get_attributes($data): array
     {
+
+        if (!$data)
+            return false;
+
         $current_pool = array();
         $new_pool = array();
         $attr = $data['note_attributes'];
 
-        error_log('Current pool: ' . serialize($data));
+
 
         $event = $this->get_db_calendar_by_id($attr[0]['value']);
         if (is_a($event, 'WP_Error')) {
@@ -75,6 +85,7 @@ class table extends \fitPlugin\backend\table
 
     private function to_string($input): string
     {
+
         return count($input) > 1 ?
             implode(',', $input) : $input[0];  //implode — Join array elements with a string
     }
@@ -86,24 +97,27 @@ class table extends \fitPlugin\backend\table
 
         $attr = $this->get_attributes($data);
 
-
         $order['event_id'] = $data['note_attributes'][0]['value'];
-        $order['order_id'] = $data['id'];
 
-        if ($this->get_event_order($order['order_id']) === $data['id']) {
-            $this->remove_event_order($order['order_id']);
+        $cur_order = $this->get_event_order($data['id']);
+
+        if (!empty($cur_order) && $cur_order !== NULL) {
+            $this->remove_event_order($data['id']);
         }
 
+        $order['order_id'] = $data['id'];
 
-        error_log('array dif: ' . serialize(array_diff($attr['order_pool'], $attr['current_pool'])));
+        error_log('array dif: ' . serialize(array_diff($attr['current_pool'], $attr['order_pool'])));
 
-        $processed_pool = $this->to_string(array_diff($attr['order_pool'], $attr['current_pool']));
+        $processed_pool = $this->to_string(array_diff( $attr['current_pool'], $attr['order_pool']));
 
         $args = array(
             'id' => $data['note_attributes'][0]['value'],
             'places_pool' => $processed_pool
         );
         $res = $this->update_db_calendar_place($args);
+
+
         if (is_a($res, 'WP_Error')) {
             throw new \Exception();
         }

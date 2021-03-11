@@ -75,39 +75,54 @@ class table
         $return_json = array();
         $orders = $this->get_all_orders();
 
-        foreach ($orders as $order) {
+        if ($orders) {
+            foreach ($orders as $order) {
 
-            $event = $this->get_db_calendar_by_id($order['event_id']);
+                $event = $this->get_db_calendar_by_id($order['event_id']);
 
-            $event_title = $event['title'];
-            $event_date = $event['start'];
-            $event_room = $this->get_room_by_id($event['room_id'])[0]->post_title;
-            $event_trainer = $this->get_trainer_by_id($event['trainer_id'])[0]->post_title;
+                $event_title = $event['title'];
+                $event_date = $event['start'];
+                $event_room = $this->get_room_by_id($event['room_id'])[0]->post_title;
+                $event_trainer = $this->get_trainer_by_id($event['trainer_id'])[0]->post_title;
+                $status = '';
 
-            $row = array(
-                'event' => '<strong>' . $event_title . '</strong> <span class="event-date">Date: ' . $event_date . '</span> <span class="event-trainer">Trainer: ' . $event_trainer . '</span>',
-                'event_room' => $event_room,
-                'order_id' => $order['order_id'],
-                'name' => $order['name'],
-                'surname' => $order['surname'],
-                'email' => $order['email'],
-                'phone' => $order['phone'],
-                'place' => $order['place'],
-                'note' => $order['note'],
-            );
-            $return_json[] = $row;
+                if ($order['cancel_reason'] !== NULL) {
+                    $status .= '<span class="cancel-' . $order['cancel_reason'] . '">' . $order['cancel_reason'] . '</span>';
+                }
+
+
+                $row = array(
+                    'event' => '<strong>' . $event_title . '</strong> <span class="event-date">Date: ' . $event_date . '</span> <span class="event-trainer">Trainer: ' . $event_trainer . '</span>',
+                    'event_room' => $event_room,
+                    'order_id' => $order['order_id'],
+                    'name' => $order['name'],
+                    'surname' => $order['surname'],
+                    'email' => $order['email'],
+                    'phone' => $order['phone'],
+                    'place' => $order['place'],
+                    'note' => $order['note'],
+                    'status' => $status,
+                );
+                $return_json[] = $row;
+            }
+
+            echo json_encode(array('data' => $return_json));
+            wp_die();
+        } else {
+            echo json_encode(array('data' => false));
+            wp_die();
         }
-
-        echo json_encode(array('data' => $return_json));
-        wp_die();
     }
 
     protected function get_all_orders()
     {
         global $wpdb;
         $c_items = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}bk_eventscustomer", 'ARRAY_A');
-
-        return $c_items;
+        if ($c_items === [] || $c_items === NULL) {
+            return false;
+        } else {
+            return $c_items;
+        }
 
     }
 
@@ -115,7 +130,11 @@ class table
     {
         global $wpdb;
         $c_items = $wpdb->get_results("SELECT * FROM {$this->table_name} WHERE id = {$id}", 'ARRAY_A');
-        return $c_items[0];
+        if ($c_items !== NULL || !empty($c_items)) {
+            return $c_items[0];
+        } else {
+            return false;
+        }
     }
 
     public function get_room_by_id($id)
@@ -249,7 +268,9 @@ class table
         } else {
             $input_arrays = $this->get_db_calendar();
         }
-
+        if (function_exists('flush_pgcache')) {
+            flush_pgcache();  //page cache
+        }
         ob_clean();
         echo json_encode($input_arrays);
         wp_die();
@@ -358,12 +379,28 @@ class table
     {
         global $wpdb;
         $c_items = $wpdb->delete("{$wpdb->prefix}bk_eventscustomer", array('order_id' => $order_id));
-
+        error_log('Order ' . $order_id . 'was removed');
+        error_log(print_r($c_items));
         if ($c_items !== 1) {
             return new \WP_Error('remove_error', 'Order remove db error');
         }
         return $c_items;
 
+    }
+
+    protected function set_event_order_status($order_id, $cancel_reason, $cancelled_at)
+    {
+        global $wpdb;
+
+        $c_items = $wpdb->udpdate("{$wpdb->prefix}bk_eventscustomer",
+            array('cancel_reason' => $cancel_reason, 'cancelled_at' => $cancelled_at),
+            array('ID' => $order_id)
+        );
+
+        if ($c_items !== 1) {
+            return new \WP_Error('update_error', 'Order status update db error');
+        }
+        return $c_items;
     }
 
 

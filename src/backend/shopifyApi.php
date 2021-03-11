@@ -29,28 +29,47 @@ class shopifyApi
         }
     }
 
+    public function order_cancel($id)
+    {
+        if (!$this->client)
+            return false;
+
+        $service = new Shopify\Service\OrderService($this->client);
+        $order = $service->get($id);
+
+        if (is_object($order)) {
+            $params = [
+                'reason' => 'customer',
+                'email' => true,
+                "amount" => $order->total_price,
+                "currency" => $order->currency
+            ];
+            $req = $service->cancel($order, $params);
+            return $req;
+        } else {
+            return $order;
+        }
+    }
+
     public function get_products()
     {
         if (!$this->client)
             return false;
 
-        try {
-            $service = new Shopify\Service\ProductService($this->client);
+        $service = new Shopify\Service\ProductService($this->client);
 
-            $attr = array(
-                'collection_id' => $this->fit_booking_options['collection_id_0'],
-                'limit' => 250
-            );
+        $attr = array(
+            'collection_id' => $this->fit_booking_options['collection_id_0'],
+            'limit' => 250
+        );
 
-            return $service->all($attr); #Fetch all products, with optional params
-
-
-
-        } catch ( Exception $e ) {
-
-            return new \WP_Error('api_error', print_r($e));
-
+        if (false === ($req = get_transient('all_products_cache'))) {
+            $req = $service->all($attr);
+            set_transient('all_products_cache', $req, 120 + 20);
         }
+
+        return $req; #Fetch all products, with optional params
+
     }
 
     public function get_price($id)
@@ -59,8 +78,13 @@ class shopifyApi
             return false;
 
         $service = new Shopify\Service\ProductVariantService($this->client);
-        $product = $service->get($id); # Get a single product
-        return $product->price;
+
+        if (false === ($req = get_transient('price_cache_' . $id))) {
+            $req = $service->get($id)->price;
+            set_transient('price_cache_' . $id, $req, 120 + 40);
+        }
+
+        return $req;
     }
 
     public function get_store_info()
@@ -69,7 +93,14 @@ class shopifyApi
             return false;
 
         $service = new Shopify\Service\ShopService($this->client);
-        return $service->get();
+
+        if (false === ($req = get_transient('store_info_cache'))) {
+            $req = $service->get();
+            set_transient('store_info_cache', $req, 120 + 60);
+        }
+
+        return $req;
     }
+
 
 }

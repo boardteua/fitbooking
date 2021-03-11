@@ -2,11 +2,90 @@
 * All of the CSS for your public-facing functionality should be
 * included in this file.
 */
+/*@font-face {*/
+/*    font-family: 'DINNeuzeitGrotesk LT';*/
+/*    src: url('../font/DINNeuzeitGroteskLT-Light.woff2') format('woff2'),*/
+/*    url('../font/DINNeuzeitGroteskLT-Light.woff') format('woff');*/
+/*    font-weight: 300;*/
+/*    font-style: normal;*/
+/*    font-display: swap;*/
+/*}*/
+
+
 @font-face {
     font-family: 'DINNeuzeitGrotesk LT';
-    src: url('../font/DINNeuzeitGroteskLT-Light.woff2') format('woff2'),
-    url('../font/DINNeuzeitGroteskLT-Light.woff') format('woff');
+    src: url('../font/NeuzeitGroExt-Bla.eot');
+    src: local('Neuzeit Grotesk Extra-condensed Black'), local('NeuzeitGroExt-Bla'),
+    url('../font/NeuzeitGroExt-Bla.eot?#iefix') format('embedded-opentype'),
+    url('../font/NeuzeitGroExt-Bla.woff2') format('woff2'),
+    url('../font/NeuzeitGroExt-Bla.woff') format('woff'),
+    url('../font/NeuzeitGroExt-Bla.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DINNeuzeitGrotesk LT';
+    src: url('../font/NeuzeitGro-Bla.eot');
+    src: local('Neuzeit Grotesk Black'), local('NeuzeitGro-Bla'),
+    url('../font/NeuzeitGro-Bla.eot?#iefix') format('embedded-opentype'),
+    url('../font/NeuzeitGro-Bla.woff2') format('woff2'),
+    url('../font/NeuzeitGro-Bla.woff') format('woff'),
+    url('../font/NeuzeitGro-Bla.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DINNeuzeitGrotesk LT';
+    src: url('../font/NeuzeitGro-Reg.eot');
+    src: local('Neuzeit Grotesk Regular'), local('NeuzeitGro-Reg'),
+    url('../font/NeuzeitGro-Reg.eot?#iefix') format('embedded-opentype'),
+    url('../font/NeuzeitGro-Reg.woff2') format('woff2'),
+    url('../font/NeuzeitGro-Reg.woff') format('woff'),
+    url('../font/NeuzeitGro-Reg.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DINNeuzeitGrotesk LT';
+    src: url('../font/NeuzeitGro-Lig.eot');
+    src: local('Neuzeit Grotesk Light'), local('NeuzeitGro-Lig'),
+    url('../font/NeuzeitGro-Lig.eot?#iefix') format('embedded-opentype'),
+    url('../font/NeuzeitGro-Lig.woff2') format('woff2'),
+    url('../font/NeuzeitGro-Lig.woff') format('woff'),
+    url('../font/NeuzeitGro-Lig.ttf') format('truetype');
     font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DINNeuzeitGrotesk LT';
+    src: url('../font/NeuzeitGro-Bol.eot');
+    src: local('Neuzeit Grotesk Bold'), local('NeuzeitGro-Bol'),
+    url('../font/NeuzeitGro-Bol.eot?#iefix') format('embedded-opentype'),
+    url('../font/NeuzeitGro-Bol.woff2') format('woff2'),
+    url('../font/NeuzeitGro-Bol.woff') format('woff'),
+    url('../font/NeuzeitGro-Bol.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'DINNeuzeitGrotesk LT';
+    src: url('../font/NeuzeitGroCon-Bla.eot');
+    src: local('Neuzeit Grotesk Condensed Black'), local('NeuzeitGroCon-Bla'),
+    url('../font/NeuzeitGroCon-Bla.eot?#iefix') format('embedded-opentype'),
+    url('../font/NeuzeitGroCon-Bla.woff2') format('woff2'),
+    url('../font/NeuzeitGroCon-Bla.woff') format('woff'),
+    url('../font/NeuzeitGroCon-Bla.ttf') format('truetype');
+    font-weight: 500;
     font-style: normal;
     font-display: swap;
 }
@@ -230,7 +309,7 @@ selector + [data-readmore-toggle], selector[data-readmore] {
 }
 
 .variant-place-selector #places li a {
-    font-size: 14px;
+    font-size: 13px;
     color: #555;
     font-family: 'DINNeuzeitGrotesk LT';
 }
@@ -241,7 +320,7 @@ selector + [data-readmore-toggle], selector[data-readmore] {
     background-color: #fff;
     border: 1px solid #e2e2e2;
     text-align: center;
-    line-height: 30px;
+    line-height: 29px;
     display: flex;
     align-items: center;
     justify-content: center;

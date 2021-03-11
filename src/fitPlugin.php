@@ -188,8 +188,13 @@ class fitPlugin
         /* --- ajax actions --- */
 
         $this->loader->add_action('wp_ajax_table_actions', $plugin_table, 'table_actions');
-        $this->loader->add_action('wp_ajax_get_orders', $plugin_table, 'get_orders');
         $this->loader->add_action('wp_ajax_get_options', $backend, 'get_options_ajax');
+        $this->loader->add_action('wp_ajax_get_orders', $plugin_table, 'get_orders');
+
+        /*----*/
+
+        $this->loader->add_action('rest_api_init', $backend, 'cancel_customer_order');
+
     }
 
     /**
@@ -235,9 +240,10 @@ class fitPlugin
         $frontend = new frontend($this->get_fit_plugin(), $this->get_version(), $this->get_table());
         $web_hooks = new webHooks($this->get_table());
 
-        $web_hooks->create_hook('orders/fulfilled');
+        $web_hooks->create_hook('orders/create');
+        //$web_hooks->create_hook('orders/fulfilled');
         $web_hooks->create_hook('orders/cancelled');
-        #$web_hooks->remove_all_hooks();
+        //$web_hooks->remove_all_hooks();
 
         $this->loader->add_action('init', $web_hooks, 'receiver');
         /*----*/

@@ -8,7 +8,7 @@
  * @wordpress-plugin
  * Plugin Name:       Fitness Booking Manager
  * Plugin URI:        https://emagicone.com/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Booking plugin for reposespace shopify site
  * Version:           1.1.0
  * Author:            eMagicOne
  * Author URI:        https://emagicone.com/
@@ -57,10 +57,11 @@ function activate_fit_plugin()
             end DATETIME NOT NULL,
             color varchar(16) NOT NULL default '',
             title TEXT NOT NULL default '',
-            product_id TEXT NOT NULL default '',
             trainer_id bigint(20) NOT NULL,
             room_id bigint(20) NOT NULL,
-            places_pool TEXT NOT NULL default '',            
+            places_pool TEXT NOT NULL default '',             
+            product_id TEXT NOT NULL default '',           
+            pool_hide int(1) NOT NULL default '0',      
             PRIMARY KEY  (id)
             )
             {$charset_collate};";
@@ -73,10 +74,6 @@ function activate_fit_plugin()
             event_id bigint(20) NOT NULL,
             name TEXT NOT NULL default '',
             surname TEXT NOT NULL default '',            
-            email TEXT NOT NULL default '',            
-            place TEXT NOT NULL default '',            
-            phone TEXT NOT NULL default '',            
-            note TEXT NOT NULL default '',            
             PRIMARY KEY  (id)
             )
             {$charset_collate};";

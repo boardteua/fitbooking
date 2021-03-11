@@ -30,9 +30,7 @@ $utils = utils::getInstance();
 <?php if ($data->room[0]->ID !== 0): ?>
     <div class="room_wrp w-100 hidden"
          data-id="<?= $data->room[0]->ID ?>"
-         data-shop="<?= array_key_exists('api_shop_domain_0', $options) ? $options['api_shop_domain_0'] : '#' ?>"
-         data-product="<?= $data->room[0]->product_id ?>"
-         data-price="<?= $utils->get_price($data->room[0]->product_id) ?>">
+         data-shop="<?= array_key_exists('api_shop_domain_0', $options) ? $options['api_shop_domain_0'] : '#' ?>">
         <h3><?= esc_attr($data->room[0]->post_title) ?></h3>
         <?php if ($data->days): ?>
             <div class="card-group owl-carousel owl-theme">

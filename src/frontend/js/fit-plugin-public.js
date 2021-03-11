@@ -150,7 +150,7 @@ jQuery(document).ready(function ($) {
                     id: args
                 },
                 success: function (out) {
-                    //console.log(out);
+                    console.log(out);
 
                     $.each(fit.rooms, function (index, val) {
                         if (val.ID == out.data.room_id) {
@@ -191,6 +191,8 @@ jQuery(document).ready(function ($) {
 
                     $(dialogModal).find('.modal-title').html(out.data.title);
 
+                    let pool_hide = out.data.pool_hide;
+
                     let start_h = new Intl.DateTimeFormat('en-AU', {
                         hour: '2-digit',
                         hour12: false
@@ -213,67 +215,72 @@ jQuery(document).ready(function ($) {
 
                     $(dialogModal).find('.modal-title').append(' <span>(' + start_h + ':' + start_m + ' - ' + end_h + ':' + end_m + ')' + '</span>');
 
-                    let settings = {
-                        rowCssPrefix: 'row-',
-                        colCssPrefix: 'col-',
-                        placeWidth: 40,
-                        placeHeight: 40,
-                    };
+                    if (pool_hide != 1) {
+
+                        let settings = {
+                            rowCssPrefix: 'row-',
+                            colCssPrefix: 'col-',
+                            placeWidth: 40,
+                            placeHeight: 40,
+                        };
 
 
-                    $.each(fit.rooms, function (index, val) {
-                        if (val.ID == out.data.room_id) {
-                            cols = val.pool_capacity[0];
-                            rows = val.pool_capacity[1];
-                        }
-                    });
-
-                    let ResizeFunction = function () {
-
-                        if (window.innerWidth >= 1200) {
-                            settings.placeWidth = 45;
-                            settings.placeHeight = 45;
-                        }
-
-                    }
-
-
-                    $(dialogModal).find('#places').css('width', rows * settings.placeWidth + 20 + 'px');
-                    $(dialogModal).find('#places').css('height', cols * settings.placeHeight + 20 + 'px');
-
-                    ResizeFunction();
-                    $(window).resize(ResizeFunction).trigger('resize');
-                    let str = [];
-                    let reservedPlaces = out.data.places_pool.split(',');
-                    //console.log(reservedPlaces);
-                    for (let i = 0; i < rows; i++) {
-                        for (let j = 0; j < cols; j++) {
-                            let placeNo = (i + j * rows + 1);
-                            let className = 'place' + ' ' + settings.rowCssPrefix + i.toString() + ' ' + settings.colCssPrefix + j.toString();
-                            if ($.inArray(placeNo + '', reservedPlaces) !== -1) {
-                                className += ' selectedPlace';
+                        $.each(fit.rooms, function (index, val) {
+                            if (val.ID == out.data.room_id) {
+                                cols = val.pool_capacity[0];
+                                rows = val.pool_capacity[1];
                             }
-                            str.push('<li class="' + className + '"' +
-                                'style="top:' + (j * settings.placeHeight).toString() + 'px;left:' + (i * settings.placeWidth).toString() + 'px">' +
-                                '<a title="' + placeNo + '">' + placeNo + '</a>' +
-                                '</li>');
+                        });
+
+                        let ResizeFunction = function () {
+
+                            if (window.innerWidth >= 1200) {
+                                settings.placeWidth = 45;
+                                settings.placeHeight = 45;
+                            }
+
                         }
+
+
+                        $(dialogModal).find('#places').css('width', rows * settings.placeWidth + 20 + 'px');
+                        $(dialogModal).find('#places').css('height', cols * settings.placeHeight + 20 + 'px');
+
+                        ResizeFunction();
+                        $(window).resize(ResizeFunction).trigger('resize');
+                        let str = [];
+                        let reservedPlaces = out.data.places_pool.split(',');
+                        //console.log(reservedPlaces);
+                        for (let i = 0; i < rows; i++) {
+                            for (let j = 0; j < cols; j++) {
+                                let placeNo = (i + j * rows + 1);
+                                let className = 'place' + ' ' + settings.rowCssPrefix + i.toString() + ' ' + settings.colCssPrefix + j.toString();
+                                if ($.inArray(placeNo + '', reservedPlaces) !== -1) {
+                                    className += ' selectedPlace';
+                                }
+                                str.push('<li class="' + className + '"' +
+                                    'style="top:' + (j * settings.placeHeight).toString() + 'px;left:' + (i * settings.placeWidth).toString() + 'px">' +
+                                    '<a title="' + placeNo + '">' + placeNo + '</a>' +
+                                    '</li>');
+                            }
+                        }
+
+                        $(dialogModal).find('#places').html(str.join(''));
+
+                        //let price = $('.room_wrp').data('price');
+                        $(dialogModal).find('.price').html('Price: <span>' + fit.crns.replace('{{amount}}', price) + '</span>');
+                        let price_ = price;
+                        $(dialogModal).find('#places').on('click', '.place', function () {
+                            if ($(this).hasClass('selectedPlace')) {
+                                alert('This place is already reserved');
+                            } else {
+                                $(this).toggleClass('selectingPlace');
+                                let price = price_ * $('#places li.selectingPlace').length;
+                                $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
+                            }
+                        });
+                    } else {
+                        $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
                     }
-
-                    $(dialogModal).find('#places').html(str.join(''));
-
-                    //let price = $('.room_wrp').data('price');
-                    $(dialogModal).find('.price').html('Price: <span>' + fit.crns.replace('{{amount}}', price) + '</span>');
-                    let price_ = price;
-                    $(dialogModal).find('#places').on('click', '.place', function () {
-                        if ($(this).hasClass('selectedPlace')) {
-                            alert('This place is already reserved');
-                        } else {
-                            $(this).toggleClass('selectingPlace');
-                            let price = price_ * $('#places li.selectingPlace').length;
-                            $(dialogModal).find('.price').html('Price: ' + fit.crns.replace('{{amount}}', price));
-                        }
-                    });
 
                     $('#submit_event').on('click', function () {
                         let pool = [], pool_all = [];
@@ -291,20 +298,25 @@ jQuery(document).ready(function ($) {
                         $.each($('#places li.selectingPlace a, #places li.selectedPlace a'), function (index, value) {
                             pool_all.push($(this).attr('title'));
                         });
-                        let qty = pool.length;
+                        let qty = 0;
+                        if (pool_hide != 1) {
+                            qty = pool.length;
+                        } else {
+                            qty = 1;
+                        }
 
                         pool = pool.length > 1 ? pool.join(',') : pool[0];
                         let permalink = 'https://' + $('.room_wrp').data('shop') + '/cart/' + product + ':' + qty +
-                            '?attributes["id"]=' + out.data.id +
-                            '&attributes["Event_Title"]=' + title +
-                            '&attributes["Room"]=' + room +
-                            '&attributes["Trainer"]=' + trainer +
-                            '&attributes["Date_Time"]=' + time +
-                            '&attributes["Select_Place"]=' + pool +
+                            '?attributes[id]=' + out.data.id +
+                            '&attributes[Event_Title]=' + title +
+                            '&attributes[Room]=' + room +
+                            '&attributes[Trainer]=' + trainer +
+                            '&attributes[Date_Time]=' + time +
+                            '&attributes[Select_Place]=' + pool +
                             '&note=' + note;
                         if (qty > 0) {
                             //window.location.href = permalink;
-                             window.open(permalink, '_blank');
+                            window.open(permalink, '_blank');
                         } else {
                             alert('Select Place');
                         }

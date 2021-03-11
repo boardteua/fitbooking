@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
             allDaySlot: false,
             height: 700,
             aspectRatio: 1,
+            slotDuration: '00:15:00',
+            slotLabelInterval: 15,
             eventTimeFormat: { // like '14:30:00'
                 hour: '2-digit',
                 minute: '2-digit',
@@ -26,19 +28,14 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             businessHours: [ // specify an array instead
                 {
-                    daysOfWeek: [1, 2, 3, 4, 5],
-                    startTime: '09:00',
-                    endTime: '19:00'
-                },
-                {
-                    daysOfWeek: [6, 7],
-                    startTime: '10:00',
-                    endTime: '16:00'
+                    daysOfWeek: [1, 2, 3, 4, 5, 6, 7],
+                    startTime: '06:00',
+                    endTime: '22:00'
                 }
             ],
-            slotMinTime: "09:00",
-            slotMaxTime: "18:00",
-            scrollTime: "09:00",
+            slotMinTime: "06:00",
+            slotMaxTime: "22:00",
+            scrollTime: "06:00",
             firstDay: 1,
             initialDate: Date.now(),
             editable: true,
@@ -84,10 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
 
                 jQuery('#submit_event').on('click', function () {
-
-
                     let event = calendar.getEventById(args.event.id);
-
                     let title = jQuery('#event_title').val();
                     let room_id = jQuery('#room_edit').val();
                     let trainer_id = jQuery('#trainer_edit').find(':selected').data('id');
@@ -96,48 +90,120 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (event.extendedProps.places_pool != '') {
                         pool.push(event.extendedProps.places_pool);
                     }
-                    jQuery.each(jQuery('#places li.selectingPlace a'), function (index, value) {
-                        item = jQuery(this).attr('title');
-                        console.log(item);
-                        pool.push(item);
-                        console.log(pool);
-                    });
 
-                    let eData = {
-                        id: args.event.id,
-                        title: title !== '' ? title : args.event.title,
-                        room_id: room_id !== '' ? room_id : args.event.room_id,
-                        trainer_id: trainer_id,
-                        product_id: product_id,
-                        places_pool: pool.join(','),
-                        start: args.event.start.toLocaleString('uk-UA'),
-                        end: args.event.end.toLocaleString('uk-UA'),
+                    let pool_hide = 0;
+                    if (jQuery('#hide_places').prop("checked")) {
+                        pool_hide = 1;
+                        console.log(pool_hide);
+                    }
 
-                    };
+                    let clone_to = jQuery('#clone_to').val();
 
-                    jQuery.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        cache: false,
-                        data: {
-                            action: 'table_actions',
-                            flag: 'update',
-                            nonce: fit.nonce,
-                            ti_data: eData
-                        },
-                        success: function (out) {
-                            calendar.refetchEvents();
+                    console.log(clone_to);
 
-                            jQuery('#dialogModal').modal('toggle');
-                            console.log('success');
-                            console.log(out);
-                        },
-                        error: function (err) {
+                    if (clone_to && title !== '') {
+                        let clone_start = new Date(args.event.start);
+                        let clone_end = new Date(args.event.end);
+                        clone_to = new Date(clone_to);
 
-                            console.log('error');
-                            console.table(err);
+
+                        clone_start.setDate(clone_start.getDate() + 7);
+                        clone_end.setDate(clone_end.getDate() + 7);
+
+                        do {
+                            let pool = [], item;
+                            jQuery.each(jQuery('#places li.selectingPlace a'), function (index, value) {
+                                item = jQuery(this).attr('title');
+                                pool.push(item);
+                            });
+
+                            let eData = {
+                                //id: args.event.id,
+                                title: title !== '' ? title : args.event.title,
+                                room_id: room_id !== '' ? room_id : args.event.room_id,
+                                trainer_id: trainer_id,
+                                product_id: product_id,
+                                places_pool: pool.join(','),
+                                pool_hide: pool_hide,
+                                start: clone_start.toLocaleString('uk-UA'),
+                                end: clone_end.toLocaleString('uk-UA'),
+                            };
+
+
+                            jQuery.ajax({
+                                url: ajaxurl,
+                                type: 'POST',
+                                cache: false,
+                                data: {
+                                    action: 'table_actions',
+                                    flag: 'add',
+                                    nonce: fit.nonce,
+                                    ti_data: eData
+                                },
+                                success: function (out) {
+                                    console.log(clone_start);
+                                },
+                                error: function (err) {
+                                    console.log('error');
+                                    console.table(err);
+                                }
+                            });
+
+                            clone_start.setDate(clone_start.getDate() + 7);
+                            clone_end.setDate(clone_end.getDate() + 7);
+
                         }
-                    });
+                        while (new Date(clone_start) <= new Date(clone_to));
+
+                        calendar.unselect();
+                        calendar.refetchEvents();
+                    }
+
+
+                    if (title !== '') {
+
+                        jQuery.each(jQuery('#places li.selectingPlace a'), function (index, value) {
+                            item = jQuery(this).attr('title');
+                            console.log(item);
+                            pool.push(item);
+                            console.log(pool);
+                        });
+
+                        let eData = {
+                            id: args.event.id,
+                            title: title !== '' ? title : args.event.title,
+                            room_id: room_id !== '' ? room_id : args.event.room_id,
+                            trainer_id: trainer_id,
+                            product_id: product_id,
+                            places_pool: pool.join(','),
+                            pool_hide: pool_hide,
+                            start: args.event.start.toLocaleString('uk-UA'),
+                            end: args.event.end.toLocaleString('uk-UA'),
+
+                        };
+
+                        jQuery.ajax({
+                            url: ajaxurl,
+                            type: 'POST',
+                            cache: false,
+                            data: {
+                                action: 'table_actions',
+                                flag: 'update',
+                                nonce: fit.nonce,
+                                ti_data: eData
+                            },
+                            success: function (out) {
+                                calendar.refetchEvents();
+                                jQuery('#dialogModal').modal('toggle');
+                            },
+                            error: function (err) {
+                                console.log('error');
+                                console.table(err);
+                            }
+                        });
+                    } else {
+                        alert('Empty Title!');
+                    }
                 });
 
 
@@ -149,6 +215,75 @@ document.addEventListener('DOMContentLoaded', function () {
                     let room_id = jQuery('#select_room_0').find(':selected').data('id');
                     let trainer_id = jQuery('#trainer_edit').find(':selected').data('id');
                     let product_id = jQuery('#product_edit').find(':selected').data('id');
+                    let pool_hide = 0;
+                    let clone_to = jQuery('#clone_to').val();
+
+                    if (clone_to && title !== '') {
+                        let clone_start = new Date(args.start);
+                        let clone_end = new Date(args.end);
+                        clone_to = new Date(clone_to);
+
+                        clone_start.setDate(clone_start.getDate() + 7);
+                        clone_end.setDate(clone_end.getDate() + 7);
+
+                        do {
+
+                            let pool = [], item;
+                            jQuery.each(jQuery('#places li.selectingPlace a'), function (index, value) {
+                                item = jQuery(this).attr('title');
+                                pool.push(item);
+                            });
+
+                            let eData = {
+                                start: clone_start.toLocaleString('uk-UA'),
+                                end: clone_end.toLocaleString('uk-UA'),
+                                title: title,
+                                room_id: room_id,
+                                trainer_id: trainer_id,
+                                product_id: product_id,
+                                places_pool: pool.length < 2 ? pool : pool.join(','),
+                                pool_hide: pool_hide
+                            };
+
+                            console.log('Fetching data:');
+                            console.log(eData);
+
+                            jQuery.ajax({
+                                url: ajaxurl,
+                                type: 'POST',
+                                cache: false,
+                                data: {
+                                    action: 'table_actions',
+                                    flag: 'add',
+                                    nonce: fit.nonce,
+                                    ti_data: eData
+                                },
+                                success: function (out) {
+
+
+                                },
+                                error: function (err) {
+                                    console.log('error');
+                                    console.table(err);
+                                }
+                            });
+
+
+                            clone_start.setDate(clone_start.getDate() + 7);
+                            clone_end.setDate(clone_end.getDate() + 7);
+
+                        }
+                        while (new Date(clone_start) <= new Date(clone_to));
+                        calendar.unselect();
+                        calendar.refetchEvents();
+                    }
+
+
+                    if (jQuery('#hide_places').prop("checked")) {
+                        pool_hide = 1;
+                        console.log(pool_hide);
+                    }
+
                     console.log(product_id);
                     if (title !== '') {
                         let pool = [], item;
@@ -165,6 +300,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             trainer_id: trainer_id,
                             product_id: product_id,
                             places_pool: pool.length < 2 ? pool : pool.join(','),
+                            pool_hide: pool_hide
                         };
 
                         console.log('Fetching data:');
@@ -193,6 +329,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 console.table(err);
                             }
                         });
+                    } else {
+                        alert('Empty Title!');
                     }
                 })
             },
@@ -253,7 +391,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 let trainer = args.event.extendedProps.trainer_id;
                 let places_ids = args.event.extendedProps.places_pool;
 
-
                 title_obj.innerHTML = args.event.title + ' <small>' + args.timeText + '</small>';
 
                 if (trainer) {
@@ -301,11 +438,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         calendar.render();
 
-        // jQuery('#select_room_0').on('change', function () {
-        //     //filterRooms();            calendar.
-        //     calendar.getEventSources();
-        //     calendar_render($(this))
-        // });
+        jQuery('.nav-calendar').on('click', function () {
+            calendar.refetchEvents();
+        });
 
         function openModal(args, state) {
 
@@ -323,6 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     event_start = args.start.toLocaleString('uk-UA');
                     event_end = args.end.toLocaleString('uk-UA');
                     remove = '';
+                    poll_hide = '';
                     select_room = '';
                     pool = [];
                     pool_capacity = jQuery('#select_room_0').find(':selected').data('capacity').split(',');
@@ -364,6 +500,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     trainer_id = event.extendedProps.trainer_id;
                     product_id = event.extendedProps.product_id;
                     pool = event.extendedProps.places_pool.split(',');
+                    poll_hide = event.extendedProps.pool_hide == 1 ? 'checked' : '';
+
+
                     pool_capacity = jQuery('#select_room_0').find(':selected').data('capacity').split(',');
                     event_start = args.event.start.toLocaleString('uk-UA');
                     event_end = args.event.end.toLocaleString('uk-UA');
@@ -409,6 +548,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     break;
             }
 
+
             let html =
                 '<div class="modal-header">' +
                 '<h5 class="modal-title" id="dialoglLabel">' + event_title + '<small class="text-info pl-2">' + event_start + ' -- ' + event_end + '</small></h5>' +
@@ -437,14 +577,31 @@ document.addEventListener('DOMContentLoaded', function () {
                 placeInit(pool, pool_capacity[1], pool_capacity[0]) +
                 '</ul>' +
                 '</div>' +
+                '<div class="row">' +
+                '<div class="form-group repeat-group">' +
+                '<label for="clone_to">Repeat to</label>' +
+                '<input type="date" name="clone_to" id="clone_to" /> ' +
+                '</div>' +
+                '</div>' +
                 '</div>' +
                 '<div class="modal-footer">' +
-                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
+                '<input type="checkbox" name="hide_places" id="hide_places"  /> <label for="hide_places" >Hide place selector</label>' +
+                '<button type="button" class="btn btn-secondary btn-close" data-dismiss="modal">Close</button>' +
                 '<button type="button" id="submit_event" class="btn btn-primary">Save changes</button>' +
+
                 remove +
                 '</div>';
 
             setModalContent(html);
+
+
+            jQuery('#hide_places').on('change', function () {
+                if (jQuery(this).prop("checked")) {
+                    jQuery('.variant-place-selector').hide();
+                } else {
+                    jQuery('.variant-place-selector').show();
+                }
+            });
 
             jQuery('.place').on('click', function () {
                 let pool_ = [];
@@ -587,13 +744,51 @@ document.addEventListener('DOMContentLoaded', function () {
         columns: [
             {data: 'event'},
             {data: 'event_room'},
-            {data: 'order_id'},
+            {
+                data: 'order_id',
+                render: function (data, type) {
+                    // https://repose-space.myshopify.com/admin/orders/2957335461923?orderListBeta=true
+                    if (type === 'display' && data !== null) {
+                        return '<a href="https://repose-space.myshopify.com/admin/orders/' + data + '?orderListBeta=true" target="_blank" >' + data + '</a> ';
+                    } else {
+                        return data;
+                    }
+
+                }
+
+            },
             {data: 'name'},
             {data: 'surname'},
-            {data: 'email'},
-            {data: 'phone'},
+            {
+                className: 'order-email',
+                data: 'email',
+                render: function (data, type) {
+                    if (type === 'display' && data !== null) {
+                        return '<a href="mailto: ' + data + '" >' + data + '</a> ';
+                    } else {
+                        return data;
+                    }
+                }
+
+            },
+            {
+                className: 'order-phone',
+                data: 'phone',
+                render: function (data, type) {
+                    if (type === 'display' && data !== null) {
+                        return '<a href="tel : ' + data + '" >' + data + '</a> ';
+                    } else {
+                        return data;
+                    }
+                }
+
+            },
             {data: 'place'},
             {data: 'note'},
+            {
+                className: 'order-status',
+                data: 'status'
+            },
         ],
 
         columnDefs: [
@@ -614,10 +809,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    jQuery('.nav-calendar').on('click', function () {
-
-    });
-
     // Order by the grouping
     jQuery('#event_orders tbody').on('click', 'tr.group', function () {
         let currentOrder = table.order()[0];
@@ -630,7 +821,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setInterval(function () {
         table.ajax.reload(null, false); // user paging is not reset on reload
-    }, 3000);
+    }, 10000);
 
 });
 
